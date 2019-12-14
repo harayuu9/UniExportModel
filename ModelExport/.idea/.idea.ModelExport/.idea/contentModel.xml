@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Owner\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Owner\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_ModelExport.-610613061.00" t="ExcludeRecursive" />
+    <e p="D:\GodFolder\DirectX11DefferdQiita\ModelExport" t="IncludeRecursive">
+      <e p="Assembly-CSharp.csproj" t="IncludeRecursive" />
+      <e p="Assets" t="Include">
+        <e p="Editor" t="Include">
+          <e p="Editor.ModelExport.asmdef" t="Include" />
+          <e p="ImportProcess.cs" t="Include" />
+          <e p="MeshExportWindow.cs" t="Include" />
+          <e p="SkinnedMeshExportWindow.cs" t="Include" />
+          <e p="VertexData.cs" t="Include" />
+        </e>
+        <e p="Scripts" t="Include">
+          <e p="AnimtionBone.cs" t="Include" />
+        </e>
+        <e p="UnityChan" t="Include">
+          <e p="Models" t="Include">
+            <e p="UnityChanShader" t="Include">
+              <e p="Shader" t="Include">
+                <e p="Unitychan_chara_akarami_blend.shader" t="Include" />
+                <e p="Unitychan_chara_eye.shader" t="Include" />
+                <e p="Unitychan_chara_eye_blend.shader" t="Include" />
+                <e p="Unitychan_chara_eyelash_blend.shader" t="Include" />
+                <e p="Unitychan_chara_fuku.shader" t="Include" />
+                <e p="Unitychan_chara_fuku_ds.shader" t="Include" />
+                <e p="Unitychan_chara_hada.shader" t="Include" />
+                <e p="Unitychan_chara_hada_blend.shader" t="Include" />
+                <e p="Unitychan_chara_hair.shader" t="Include" />
+                <e p="Unitychan_chara_hair_ds.shader" t="Include" />
+              </e>
+            </e>
+          </e>
+        </e>
+      </e>
+      <e p="Editor.ModelExport.csproj" t="IncludeRecursive" />
+      <e p="ModelExport.sln" t="IncludeFlat" />
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="Packages" t="ExcludeRecursive" />
+      <e p="Temp\bin" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
