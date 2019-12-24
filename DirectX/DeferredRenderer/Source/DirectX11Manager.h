@@ -1,5 +1,6 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
+#include "UniExportModel.hpp"
 //WindowsDirectX
 #include <windows.h>
 #include <d3d11.h>
@@ -12,7 +13,6 @@
 #include "examples/imgui_impl_win32.h"
 #include "examples/imgui_impl_dx11.h"
 
-#include "UniExportModel.hpp"
 
 #include <string>
 #include <iostream>

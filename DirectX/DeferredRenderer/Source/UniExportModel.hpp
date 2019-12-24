@@ -5,7 +5,6 @@
 #include <fstream>
 #include <unordered_map>
 #include <memory>
-#include <Windows.h>
 
 namespace uem
 {
@@ -167,7 +166,7 @@ namespace uem
 		struct Mesh
 		{
 			std::vector<X> vertexDatas;
-			std::vector<UINT> indexs;
+			std::vector<uint32_t> indexs;
 			int materialNo;
 		};
 		std::vector<Mesh> meshs;
@@ -199,7 +198,6 @@ namespace uem
 			{
 				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
-				MessageBox(0, errorLog.c_str(), "VertexFormat Error", MB_OK | MB_ICONWARNING);
 			}
 
 			for (int i = 0; i < modelCount; i++)
@@ -210,7 +208,7 @@ namespace uem
 				ifs >> vertexCount;
 				for (int j = 0; j < vertexCount; j++)
 				{
-					byte* rawData = new byte[sizeof(X)];
+					uint8_t* rawData = new uint8_t[sizeof(X)];
 					int rawCnt = 0;
 
 					for (int i = 0; i < formatSizes.size(); i++)
@@ -291,8 +289,8 @@ namespace uem
 			short vertexFormat;
 			fileStream.Read(&vertexFormat, sizeof(short));
 
-			USHORT modelCount;
-			fileStream.Read(&modelCount, sizeof(USHORT));
+			uint16_t modelCount;
+			fileStream.Read(&modelCount, sizeof(uint16_t));
 
 			//フォーマットエラーチェック
 			std::vector<bool> formatFlg;
@@ -306,38 +304,37 @@ namespace uem
 			{
 				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
-				MessageBox(0, errorLog.c_str(), "VertexFormat Error", MB_OK | MB_ICONWARNING);
 			}
 
 			for (int i = 0; i < modelCount; i++)
 			{
 				Mesh model;
 				//頂点情報読み込み
-				UINT vertexCount;
-				fileStream.Read(&vertexCount, sizeof(UINT));
+				uint32_t vertexCount;
+				fileStream.Read(&vertexCount, sizeof(uint32_t));
 				model.vertexDatas.resize(vertexCount);
 				fileStream.Read(&model.vertexDatas[0], sizeof(X) * vertexCount);
 
 				//インデックス読み込み
-				UINT indexCount;
-				fileStream.Read(&indexCount, sizeof(UINT));
+				uint32_t indexCount;
+				fileStream.Read(&indexCount, sizeof(uint32_t));
 				model.indexs.resize(indexCount);
-				fileStream.Read(&model.indexs[0], sizeof(UINT) * indexCount);
+				fileStream.Read(&model.indexs[0], sizeof(uint32_t) * indexCount);
 
 				//マテリアルの読み込み
 				Material material;
-				USHORT materialNameCount;
-				fileStream.Read(&materialNameCount, sizeof(USHORT));
+				uint16_t materialNameCount;
+				fileStream.Read(&materialNameCount, sizeof(uint16_t));
 				material.name.resize(materialNameCount);
 				fileStream.Read(&material.name[0], sizeof(char) * materialNameCount);
 
-				USHORT colorCount;
-				fileStream.Read(&colorCount, sizeof(USHORT));
+				uint16_t colorCount;
+				fileStream.Read(&colorCount, sizeof(uint16_t));
 				for (int i = 0; i < colorCount; i++)
 				{
 					std::string propertyName;
-					USHORT propertyNameCount;
-					fileStream.Read(&propertyNameCount, sizeof(USHORT));
+					uint16_t propertyNameCount;
+					fileStream.Read(&propertyNameCount, sizeof(uint16_t));
 					propertyName.resize(propertyNameCount);
 					fileStream.Read(&propertyName[0], sizeof(char) * propertyNameCount);
 
@@ -346,19 +343,19 @@ namespace uem
 					material.AddColor(propertyName, color);
 				}
 
-				USHORT textureCount;
-				fileStream.Read(&textureCount, sizeof(USHORT));
+				uint16_t textureCount;
+				fileStream.Read(&textureCount, sizeof(uint16_t));
 				for (int i = 0; i < textureCount; i++)
 				{
 					std::string propertyName;
-					USHORT propertyNameCount;
-					fileStream.Read(&propertyNameCount, sizeof(USHORT));
+					uint16_t propertyNameCount;
+					fileStream.Read(&propertyNameCount, sizeof(uint16_t));
 					propertyName.resize(propertyNameCount);
 					fileStream.Read(&propertyName[0], sizeof(char) * propertyNameCount);
 
 					std::string textureName;
-					USHORT textureNameCount;
-					fileStream.Read(&textureNameCount, sizeof(USHORT));
+					uint16_t textureNameCount;
+					fileStream.Read(&textureNameCount, sizeof(uint16_t));
 					if (textureNameCount == 0) {
 						material.AddTexture(propertyName, "null");
 						continue;
@@ -531,7 +528,6 @@ namespace uem
 			{
 				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
-				MessageBox(0, errorLog.c_str(), "VertexFormat Error", MB_OK | MB_ICONWARNING);
 			}
 
 			for (int i = 0; i < modelCount; i++)
@@ -542,7 +538,7 @@ namespace uem
 				ifs >> vertexCount;
 				for (int j = 0; j < vertexCount; j++)
 				{
-					byte* rawData = new byte[sizeof(X)];
+					uint8_t* rawData = new uint8_t[sizeof(X)];
 					int rawCnt = 0;
 
 					for (int i = 0; i < formatSizes.size(); i++)
@@ -651,8 +647,8 @@ namespace uem
 			short vertexFormat;
 			fileStream.Read(&vertexFormat, sizeof(short));
 
-			USHORT modelCount;
-			fileStream.Read(&modelCount, sizeof(USHORT));
+			uint16_t modelCount;
+			fileStream.Read(&modelCount, sizeof(uint16_t));
 
 			//フォーマットエラーチェック
 			std::vector<bool> formatFlg;
@@ -666,32 +662,31 @@ namespace uem
 			{
 				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
-				MessageBox(0, errorLog.c_str(), "VertexFormat Error", MB_OK | MB_ICONWARNING);
 			}
 
 			for (int i = 0; i < modelCount; i++)
 			{
 				Mesh model;
 				//頂点情報読み込み
-				UINT vertexCount;
-				fileStream.Read(&vertexCount, sizeof(UINT));
+				uint32_t vertexCount;
+				fileStream.Read(&vertexCount, sizeof(uint32_t));
 				model.vertexDatas.resize(vertexCount);
 				fileStream.Read(&model.vertexDatas[0], sizeof(X) * vertexCount);
 
 				//インデックス読み込み
-				UINT indexCount;
-				fileStream.Read(&indexCount, sizeof(UINT));
+				uint32_t indexCount;
+				fileStream.Read(&indexCount, sizeof(uint32_t));
 				model.indexs.resize(indexCount);
-				fileStream.Read(&model.indexs[0], sizeof(UINT) * indexCount);
+				fileStream.Read(&model.indexs[0], sizeof(uint32_t) * indexCount);
 
 				//ベースポーズ読み込み
-				USHORT basePoseCount;
-				fileStream.Read(&basePoseCount, sizeof(USHORT));
+				uint16_t basePoseCount;
+				fileStream.Read(&basePoseCount, sizeof(uint16_t));
 				for (int j = 0; j < basePoseCount; j++)
 				{
 					std::string name;
-					USHORT nameCount;
-					fileStream.Read(&nameCount, sizeof(USHORT));
+					uint16_t nameCount;
+					fileStream.Read(&nameCount, sizeof(uint16_t));
 					name.resize(nameCount);
 					fileStream.Read(&name[0], sizeof(char) * nameCount);
 
@@ -704,18 +699,18 @@ namespace uem
 
 				//マテリアルの読み込み
 				Material material;
-				USHORT materialNameCount;
-				fileStream.Read(&materialNameCount, sizeof(USHORT));
+				uint16_t materialNameCount;
+				fileStream.Read(&materialNameCount, sizeof(uint16_t));
 				material.name.resize(materialNameCount);
 				fileStream.Read(&material.name[0], sizeof(char) * materialNameCount);
 
-				USHORT colorCount;
-				fileStream.Read(&colorCount, sizeof(USHORT));
+				uint16_t colorCount;
+				fileStream.Read(&colorCount, sizeof(uint16_t));
 				for (int i = 0; i < colorCount; i++)
 				{
 					std::string propertyName;
-					USHORT propertyNameCount;
-					fileStream.Read(&propertyNameCount, sizeof(USHORT));
+					uint16_t propertyNameCount;
+					fileStream.Read(&propertyNameCount, sizeof(uint16_t));
 					propertyName.resize(propertyNameCount);
 					fileStream.Read(&propertyName[0], sizeof(char) * propertyNameCount);
 
@@ -724,19 +719,19 @@ namespace uem
 					material.AddColor(propertyName, color);
 				}
 
-				USHORT textureCount;
-				fileStream.Read(&textureCount, sizeof(USHORT));
+				uint16_t textureCount;
+				fileStream.Read(&textureCount, sizeof(uint16_t));
 				for (int i = 0; i < textureCount; i++)
 				{
 					std::string propertyName;
-					USHORT propertyNameCount;
-					fileStream.Read(&propertyNameCount, sizeof(USHORT));
+					uint16_t propertyNameCount;
+					fileStream.Read(&propertyNameCount, sizeof(uint16_t));
 					propertyName.resize(propertyNameCount);
 					fileStream.Read(&propertyName[0], sizeof(char) * propertyNameCount);
 
 					std::string textureName;
-					USHORT textureNameCount;
-					fileStream.Read(&textureNameCount, sizeof(USHORT));
+					uint16_t textureNameCount;
+					fileStream.Read(&textureNameCount, sizeof(uint16_t));
 					if (textureNameCount == 0) {
 						material.AddTexture(propertyName, "null");
 						continue;
@@ -849,23 +844,23 @@ namespace uem
 		{
 			FileStream fileStream(filename.c_str());
 
-			UINT animationCount;
-			fileStream.Read(&animationCount, sizeof(UINT));
+			uint32_t animationCount;
+			fileStream.Read(&animationCount, sizeof(uint32_t));
 
 			animationList.resize(animationCount);
-			for (UINT i = 0; i < animationCount; i++)
+			for (uint16_t i = 0; i < animationCount; i++)
 			{
 				auto& anim = animationList[i];
 				std::string transformName;
-				USHORT transformNameCount;
-				fileStream.Read(&transformNameCount, sizeof(USHORT));
+				uint16_t transformNameCount;
+				fileStream.Read(&transformNameCount, sizeof(uint16_t));
 				transformName.resize((size_t)transformNameCount);
 				fileStream.Read(&transformName[0], sizeof(char) * transformNameCount);
 				anim.transform = root->Find(transformName);
 				for (int j = 0; j < 10; j++)
 				{
-					UINT keyCount;
-					fileStream.Read(&keyCount, sizeof(UINT));
+					uint32_t keyCount;
+					fileStream.Read(&keyCount, sizeof(uint32_t));
 					anim.curves[j].times.resize(keyCount);
 					anim.curves[j].keys.resize(keyCount);
 					fileStream.Read(&anim.curves[j].times[0], sizeof(float) * keyCount);
