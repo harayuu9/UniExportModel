@@ -8,6 +8,7 @@
       <Path>Library/PackageCache/com.unity.ide.rider@1.1.0</Path>
       <Path>Library/PackageCache/com.unity.purchasing@2.0.6</Path>
       <Path>Library/PackageCache/com.unity.test-framework.performance@1.0.9-preview</Path>
+      <Path>Library/PackageCache/com.unity.test-framework@1.0.18</Path>
       <Path>Packages</Path>
       <Path>ProjectSettings</Path>
     </explicitIncludes>

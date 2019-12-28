@@ -40,4 +40,5 @@ Sampleの動くバージョンはVisualStudio2019になります<br>
 <br>
 ![Animation](https://user-images.githubusercontent.com/24310162/70852963-27142180-1eeb-11ea-86b9-4fb2efe55390.gif)<br>
 
-
+## License
+MIT
