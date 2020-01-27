@@ -21,7 +21,7 @@ namespace Editor
 		private readonly MaterialDataOption materialDataOption = new MaterialDataOption();
 
 		private GameObject meshObject = null;
-		
+
 		private void OnGUI()
 		{
 			meshObject = EditorGUILayout.ObjectField("SkinnedMesh", meshObject, typeof(GameObject), true) as GameObject;
@@ -30,9 +30,9 @@ namespace Editor
 				using (new GUILayout.HorizontalScope())
 				{
 					if (GUILayout.Button("Write"))
-						WriteSkinnedMesh(meshObject, false);
+						WriteSkinnedMesh(meshObject);
 					if (GUILayout.Button("WriteBinary"))
-						WriteSkinnedMesh(meshObject, true);
+						WriteSkinnedMeshBinary(meshObject);
 				}
 			}
 
@@ -89,7 +89,7 @@ namespace Editor
 			EditorGUILayout.EndFoldoutHeaderGroup();
 		}
 
-		private void WriteSkinnedMesh(GameObject @object, bool isBinary)
+		private void WriteSkinnedMesh(GameObject @object)
 		{
 			//オブジェクトに非対応のものが入ってきたときの処理
 			var animator = @object.GetComponentInChildren<Animator>();
@@ -105,27 +105,15 @@ namespace Editor
 				return;
 			}
 
-			var filePath = EditorUtility.SaveFilePanel("Save", "Assets", "SkinnedMeshData", "txt");
+			var filePath = EditorUtility.SaveFilePanel("Save", "Assets", "SkinnedMeshData", "usa");
 
 			if (string.IsNullOrEmpty(filePath)) return;
-			if (isBinary)
+			using (var writer = new StreamWriter(filePath))
 			{
-				using (var writer = new BinaryWriter(new FileStream(filePath + ".bin", FileMode.Create)))
-				{
-					var splitSlash = filePath.Split('/');
-					filePath = filePath.Remove(filePath.Length - splitSlash.Last().Length, splitSlash.Last().Length);
-					WriteSkinnedMeshBinary(writer, @object, filePath);
-				}
-			}
-			else
-			{
-				using (var writer = new StreamWriter(filePath))
-				{
-					var splitSlash = filePath.Split('/');
-					var tmpFilePath = filePath.Remove(filePath.Length - splitSlash.Last().Length,
-						splitSlash.Last().Length);
-					WriteSkinnedMeshAscii(writer, @object, tmpFilePath);
-				}
+				var splitSlash = filePath.Split('/');
+				var tmpFilePath = filePath.Remove(filePath.Length - splitSlash.Last().Length,
+					splitSlash.Last().Length);
+				WriteSkinnedMeshAscii(writer, @object, tmpFilePath);
 			}
 
 			//Animatorに登録されているアニメーション全て
@@ -135,22 +123,54 @@ namespace Editor
 				var clipName = clip.name;
 				var invalidChars = Path.GetInvalidFileNameChars();
 				clipName = invalidChars.Aggregate(clipName, (current, c) => current.Replace(c.ToString(), ""));
-				Debug.Log(filePath + clipName + "anim.txt");
+				Debug.Log(filePath + clipName + "anim.usaa");
 
-				if (isBinary)
+				using (var writer = new StreamWriter(filePath + clipName + "anim.usaa"))
 				{
-					using (var writer =
-						new BinaryWriter(new FileStream(filePath + clipName + "anim.bin", FileMode.Create)))
-					{
-						WriteAnimationBinary(writer, clip, @object.transform);
-					}
+					WriteAnimationAscii(writer, clip, @object.transform);
 				}
-				else
+			}
+		}
+
+		private void WriteSkinnedMeshBinary(GameObject @object)
+		{
+			//オブジェクトに非対応のものが入ってきたときの処理
+			var animator = @object.GetComponentInChildren<Animator>();
+			if (animator == null)
+			{
+				EditorUtility.DisplayDialog("Model Export Error", "This object don't have Animator", "OK");
+				return;
+			}
+
+			if (animator.isHuman)
+			{
+				EditorUtility.DisplayDialog("Model Export Error", "Humanoid is not support", "OK");
+				return;
+			}
+
+			var filePath = EditorUtility.SaveFilePanel("Save", "Assets", "SkinnedMeshData", "usb");
+
+			if (string.IsNullOrEmpty(filePath)) return;
+			using (var writer = new BinaryWriter(new FileStream(filePath, FileMode.Create)))
+			{
+				var splitSlash = filePath.Split('/');
+				filePath = filePath.Remove(filePath.Length - splitSlash.Last().Length, splitSlash.Last().Length);
+				WriteSkinnedMeshBinary(writer, @object, filePath);
+			}
+
+			//Animatorに登録されているアニメーション全て
+			var clips = animator.runtimeAnimatorController.animationClips;
+			foreach (var clip in clips)
+			{
+				var clipName = clip.name;
+				var invalidChars = Path.GetInvalidFileNameChars();
+				clipName = invalidChars.Aggregate(clipName, (current, c) => current.Replace(c.ToString(), ""));
+				Debug.Log(filePath + clipName + "anim.usab");
+
+				using (var writer =
+					new BinaryWriter(new FileStream(filePath + clipName + "anim.usab", FileMode.Create)))
 				{
-					using (var writer = new StreamWriter(filePath + clipName + "anim.txt"))
-					{
-						WriteAnimationAscii(writer, clip, @object.transform);
-					}
+					WriteAnimationBinary(writer, clip, @object.transform);
 				}
 			}
 		}

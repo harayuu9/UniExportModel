@@ -21,8 +21,6 @@ namespace Editor
         private float progress = 0.0f;
         private string progressStr;
 
-        private static readonly int Color = Shader.PropertyToID("_Color");
-        private static readonly int MainTex = Shader.PropertyToID("_MainTex");
 
         private readonly VertexDataOption vertexDataOption = new VertexDataOption();
         private readonly MaterialDataOption materialDataOption = new MaterialDataOption();
@@ -134,7 +132,7 @@ namespace Editor
 
         private void WriteMesh()
         {
-            var filePath = EditorUtility.SaveFilePanel("Save", "Assets", "MeshData", "txt");
+            var filePath = EditorUtility.SaveFilePanel("Save", "Assets", "MeshData", "uma");
 
             if (string.IsNullOrEmpty(filePath)) return;
             using (var writer = new StreamWriter(filePath))
@@ -147,7 +145,7 @@ namespace Editor
 
         private void WriteMeshBinary()
         {
-            var filePath = EditorUtility.SaveFilePanel("Save", "Assets", "MeshData", "bin");
+            var filePath = EditorUtility.SaveFilePanel("Save", "Assets", "MeshData", "umb");
 
             if (string.IsNullOrEmpty(filePath)) return;
             using (var writer = new BinaryWriter(new FileStream(filePath, FileMode.Create)))
@@ -207,7 +205,6 @@ namespace Editor
                 nonSkinnedMesh.OutputBinary(writer,vertexDataOption);
 
                 //マテリアルデータを出力
-                //Albedoカラーとテクスチャのみ
                 meshObject.GetComponent<MeshRenderer>().sharedMaterial.OutputBinary(writer,materialDataOption,filePath);
             }
 

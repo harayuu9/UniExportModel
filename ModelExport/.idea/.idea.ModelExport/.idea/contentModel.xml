@@ -11,14 +11,16 @@
           <e p="ImportProcess.cs" t="Include" />
           <e p="MeshExportWindow.cs" t="Include" />
           <e p="SkinnedMeshExportWindow.cs" t="Include" />
+          <e p="UmbImporter.cs" t="Include" />
+          <e p="UnsafeFileSystem.cs" t="Include" />
           <e p="Utility.cs" t="Include" />
         </e>
         <e p="Scripts" t="Include">
           <e p="AnimtionBone.cs" t="Include" />
+          <e p="Tset.cs" t="Include" />
         </e>
         <e p="Tests" t="Include">
           <e p="Tests.asmdef" t="Include" />
-          <e p="UnsafeFileSystem.cs" t="Include" />
           <e p="UnsafeTest.cs" t="Include" />
         </e>
         <e p="UnityChan" t="Include">

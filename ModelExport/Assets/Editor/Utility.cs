@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using JetBrains.Annotations;
+using UnityEditor;
 using UnityEngine;
 
 namespace Editor
@@ -626,7 +627,7 @@ namespace Editor
             foreach (var textureProperty in option.Textures)
             {
                 var texture = (Texture2D) material.GetTexture(textureProperty);
-
+                
                 var byteStr2 = Encoding.ASCII.GetBytes(textureProperty);
                 writer.Write((ushort) byteStr2.Length);
                 writer.Write(byteStr2, 0, byteStr2.Length);
