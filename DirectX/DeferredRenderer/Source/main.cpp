@@ -21,18 +21,18 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	XMVECTOR targetPos = XMVectorSet(0, 1, 0, 0);
 	XMVECTOR upVector = XMVectorSet(0, 1, 0, 0);
 	constantBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(eyePos, targetPos, upVector));
-	
+
 	UnityExportModel model;
 	//model.LoadAscii("Assets/Models/MeshData.txt");
 	model.LoadBinary("Assets/Models/MeshData.bin");
-	
+
 	UnityExportSkinnedModel skinnedModel;
 	//skinnedModel.LoadAscii("Assets/Models/SkinnedMeshData.txt");
 	skinnedModel.LoadBinary("Assets/Models/SkinnedMeshData.txt.bin");
 
 	uem::SkinnedAnimation animation;
-	//animation.LoadAscii("Assets/Models/JUMP00anim.txt", skinnedModel.uemData.root);
-	animation.LoadBinary("Assets/Models/JUMP00anim.bin", skinnedModel.uemData.root);
+	//animation.LoadAscii("Assets/Models/JUMP00anim.txt", skinnedModel.uemData.root.get());
+	animation.LoadBinary("Assets/Models/JUMP00anim.bin", skinnedModel.uemData.root.get());
 	MSG msg = { 0 };
 	while (true)
 	{
@@ -68,10 +68,10 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		g_DX11Manager.DrawBegin();
 
 		static float animeTime = 0.0f;
-		ImGui::SliderFloat("AnimTime", &animeTime, 0.0f, 3.0f);
+		ImGui::SliderFloat("AnimTime", &animeTime, 0.0f, animation.GetMaxAnimationTime());
 		animation.SetTransform(animeTime);
 
-		ID3D11Buffer * tmpCb[] = { cb.Get() };
+		ID3D11Buffer* tmpCb[] = { cb.Get() };
 		g_DX11Manager.m_pImContext->VSSetConstantBuffers(0, 1, tmpCb);
 
 		model.Draw();
@@ -81,6 +81,5 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	}
 
 	g_DX11Manager.Cleanup();
-
 	return 0;
 }

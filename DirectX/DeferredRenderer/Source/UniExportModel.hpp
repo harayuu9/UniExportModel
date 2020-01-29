@@ -45,8 +45,8 @@ namespace uem
 
 	struct Transform
 	{
-		std::shared_ptr<Transform> parent = nullptr;
-		std::vector<std::shared_ptr<Transform>> child;
+		Transform* parent = nullptr;
+		std::vector<Transform*> child;
 
 		size_t hash;
 		std::string name;
@@ -394,14 +394,14 @@ namespace uem
 		};
 		std::vector<Mesh> meshs;
 		std::vector<Material> materials;
-		std::shared_ptr<Transform> root;
-		std::unordered_map<size_t, std::shared_ptr<Transform>> transformMap;
+		std::unique_ptr<Transform> root;
+		std::unordered_map<size_t, std::unique_ptr<Transform>> transformMap;
 
 	private:
 		void LoadHierarchyAscii(std::ifstream& ifs)
 		{
 			//ÉÇÉfÉãÇÃäKëwç\ë¢Çì«Ç›çûÇ›
-			auto active = root;
+			auto active = root.get();
 			int transformCount = 0;
 			{
 				std::string tmp;
@@ -428,7 +428,7 @@ namespace uem
 				}
 				else
 					transformCount++;
-				auto newTrans = std::shared_ptr<Transform>(new Transform());
+				auto newTrans = std::unique_ptr<Transform>(new Transform());
 				newTrans->name = tmp;
 				newTrans->hash = std::hash<std::string>()(tmp);
 				ifs >> newTrans->position.x >> newTrans->position.y >> newTrans->position.z;
@@ -439,15 +439,15 @@ namespace uem
 					DirectX::XMConvertToRadians(euler.y), DirectX::XMConvertToRadians(euler.z));
 				ifs >> newTrans->scale.x >> newTrans->scale.y >> newTrans->scale.z;
 				newTrans->parent = active;
-				active->child.push_back(newTrans);
-				active = newTrans;
-				transformMap.insert(std::make_pair(newTrans->hash, newTrans));
+				active->child.push_back(newTrans.get());
+				active = newTrans.get();
+				transformMap.insert(std::make_pair(newTrans->hash, std::move(newTrans)));
 			}
 		}
 
 		void LoadHierarchyBinary(FileStream& fileStream)
 		{
-			auto active = root;
+			auto active = root.get();
 			int transformCount = 0;
 			{
 				std::string tmp;
@@ -481,7 +481,7 @@ namespace uem
 				tmp.resize(tmpCount);
 				fileStream.Read(&tmp[0], sizeof(char) * tmpCount);
 
-				auto newTrans = std::shared_ptr<Transform>(new Transform());
+				auto newTrans = std::unique_ptr<Transform>(new Transform());
 				newTrans->name = tmp;
 				newTrans->hash = std::hash<std::string>()(tmp);
 
@@ -492,9 +492,9 @@ namespace uem
 					DirectX::XMConvertToRadians(euler.y), DirectX::XMConvertToRadians(euler.z));
 				fileStream.Read(&newTrans->scale, sizeof(float) * 3);
 				newTrans->parent = active;
-				active->child.push_back(newTrans);
-				active = newTrans;
-				transformMap.insert(std::make_pair(newTrans->hash, newTrans));
+				active->child.push_back(newTrans.get());
+				active = newTrans.get();
+				transformMap.insert(std::make_pair(newTrans->hash, std::move(newTrans)));
 			}
 		}
 	public:
@@ -780,7 +780,7 @@ namespace uem
 					return keys[keys.size() - 1];
 
 				int index = 0;
-				for (; index < times.size(); index++)
+				for (; index < times.size() - 1; index++)
 				{
 					if (times[index] > time)
 						break;
@@ -809,8 +809,9 @@ namespace uem
 		};
 	private:
 		std::vector<Animation> animationList;
+		float maxAnimationTime = 0;
 	public:
-		void LoadAscii(std::string filename, std::shared_ptr<Transform> root)
+		void LoadAscii(std::string filename, Transform* root)
 		{
 			std::ifstream ifs(filename);
 			auto lastSlash = filename.find_last_of('/');
@@ -832,15 +833,19 @@ namespace uem
 					ifs >> keyCount;
 					anim.curves[j].times.resize(keyCount);
 					anim.curves[j].keys.resize(keyCount);
-					for (int k = 0; k < keyCount; k++)
+					for (int k = 0; k < keyCount; k++) 
+					{
 						ifs >> anim.curves[j].times[k];
+						if (anim.curves[j].times[k] > maxAnimationTime)
+							maxAnimationTime = anim.curves[j].times[k];
+					}
 					for (int k = 0; k < keyCount; k++)
 						ifs >> anim.curves[j].keys[k];
 				}
 			}
 		}
 
-		void LoadBinary(std::string filename, std::shared_ptr<Transform> root)
+		void LoadBinary(std::string filename, Transform* root)
 		{
 			FileStream fileStream(filename.c_str());
 
@@ -864,6 +869,11 @@ namespace uem
 					anim.curves[j].times.resize(keyCount);
 					anim.curves[j].keys.resize(keyCount);
 					fileStream.Read(&anim.curves[j].times[0], sizeof(float) * keyCount);
+					for (uint32_t t = 0; t < keyCount; t++)
+					{
+						if (anim.curves[j].times[t] > maxAnimationTime)
+							maxAnimationTime = anim.curves[j].times[t];
+					}
 					fileStream.Read(&anim.curves[j].keys[0], sizeof(float) * keyCount);
 				}
 			}
@@ -874,5 +884,10 @@ namespace uem
 			for (auto& animation : animationList)
 				animation.SetTransform(time);
 		};
+
+		float GetMaxAnimationTime() const
+		{
+			return maxAnimationTime;
+		}
 	};
 }
