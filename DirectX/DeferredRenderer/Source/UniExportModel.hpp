@@ -1,24 +1,30 @@
+// ReSharper disable CppClangTidyBugproneNarrowingConversions
 #pragma once
+#include <cstring>
 #include <DirectXMath.h>
-#include <string>
-#include <vector>
-#include <fstream>
-#include <unordered_map>
 #include <memory>
+#include <stdio.h>
+#include <fstream>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 namespace uem
 {
 	class FileStream
 	{
 	private:
-		char* data = nullptr;
-		char* activeData = nullptr;
+		char* m_data = nullptr;
+		char* m_activeData = nullptr;
 	public:
-		FileStream() {}
-		FileStream(const char* filename) { Load(filename); }
-		~FileStream() {
-			if (data != nullptr)
-				delete[] data;
+		FileStream() = default;
+		explicit FileStream(const char* filename) { Load(filename); }
+		FileStream(const FileStream&) = delete;
+		FileStream& operator=(const FileStream&) = delete;
+
+		~FileStream()
+		{
+			delete[] m_data;
 		}
 
 		void Load(const char* filename)
@@ -30,48 +36,47 @@ namespace uem
 			fgetpos(fp, &pos);
 			fseek(fp, 0, SEEK_SET);
 
-			data = new char[pos];
-			fread(data, sizeof(char), pos, fp);
-			activeData = data;
+			m_data = new char[pos];
+			fread(m_data, sizeof(char), pos, fp);
+			m_activeData = m_data;
 			fclose(fp);
 		}
 
-		void Read(void* data, int size)
+		void Read(void* data, const int size)
 		{
-			memcpy(data, activeData, size);
-			activeData += size;
+			std::memcpy(data, m_activeData, size);
+			m_activeData += size;
 		}
 	};
 
 	struct Transform
 	{
-		Transform* parent = nullptr;
-		std::vector<Transform*> child;
+		Transform* m_parent = nullptr;
+		std::vector<Transform*> m_child;
 
-		size_t hash;
-		std::string name;
-		DirectX::XMFLOAT3 position;
-		DirectX::XMVECTOR rotation;
-		DirectX::XMFLOAT3 scale;
+		std::size_t m_hash;
+		std::string m_name;
+		DirectX::XMFLOAT3 m_position;
+		DirectX::XMVECTOR m_rotation;
+		DirectX::XMFLOAT3 m_scale;
 
-		DirectX::XMMATRIX LocalToWorldMatrix()
+		DirectX::XMMATRIX LocalToWorldMatrix() const
 		{
-			auto localMtx = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z) *
-				DirectX::XMMatrixRotationQuaternion(rotation) *
-				DirectX::XMMatrixTranslation(position.x, position.y, position.z);
-			if (parent == nullptr)
+			auto localMtx = DirectX::XMMatrixScaling(m_scale.x, m_scale.y, m_scale.z) *
+				DirectX::XMMatrixRotationQuaternion(m_rotation) *
+				DirectX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z);
+			if (m_parent == nullptr)
 				return localMtx;
-			else
-				return localMtx * parent->LocalToWorldMatrix();
+			return localMtx * m_parent->LocalToWorldMatrix();
 		}
 
-		Transform* Find(std::string str)
+		Transform* Find(const std::string& str)
 		{
-			if (name == str)
+			if (m_name == str)
 				return this;
-			for (auto t : child)
+			for (auto* t : m_child)
 			{
-				auto ret = t->Find(str);
+				auto* ret = t->Find(str);
 				if (ret != nullptr)
 					return ret;
 			}
@@ -98,63 +103,66 @@ namespace uem
 	static std::vector<std::pair<int, int>> VertexFormatSizes()
 	{
 		std::vector<std::pair<int, int>> result;
-		result.push_back(std::make_pair(POSITION, 4 * 3));
-		result.push_back(std::make_pair(NORMAL, 4 * 3));
-		result.push_back(std::make_pair(TANGENT, 4 * 3));
-		result.push_back(std::make_pair(UV1, 4 * 2));
-		result.push_back(std::make_pair(UV2, 4 * 2));
-		result.push_back(std::make_pair(UV3, 4 * 2));
-		result.push_back(std::make_pair(UV4, 4 * 2));
-		result.push_back(std::make_pair(UV5, 4 * 2));
-		result.push_back(std::make_pair(UV6, 4 * 2));
-		result.push_back(std::make_pair(UV7, 4 * 2));
-		result.push_back(std::make_pair(UV8, 4 * 2));
-		result.push_back(std::make_pair(COLOR, 4 * 4));
+		result.emplace_back(POSITION, 4 * 3);
+		result.emplace_back(NORMAL, 4 * 3);
+		result.emplace_back(TANGENT, 4 * 3);
+		result.emplace_back(UV1, 4 * 2);
+		result.emplace_back(UV2, 4 * 2);
+		result.emplace_back(UV3, 4 * 2);
+		result.emplace_back(UV4, 4 * 2);
+		result.emplace_back(UV5, 4 * 2);
+		result.emplace_back(UV6, 4 * 2);
+		result.emplace_back(UV7, 4 * 2);
+		result.emplace_back(UV8, 4 * 2);
+		result.emplace_back(COLOR, 4 * 4);
 		return result;
 	}
 
 	struct Material
 	{
 	private:
-		std::unordered_map<size_t, std::string> textureNames;
-		std::unordered_map<size_t, DirectX::XMFLOAT4> colors;
+		std::unordered_map<std::size_t, std::string> m_textureNames;
+		std::unordered_map<std::size_t, DirectX::XMFLOAT4> m_colors;
 
 	public:
 		std::string name;
 
-		static size_t GetHash(std::string property)
+		static std::size_t GetHash(const std::string& property)
 		{
 			return std::hash<std::string>()(property);
 		}
 
-		void AddColor(std::string property, DirectX::XMFLOAT4 color)
+		void AddColor(const std::string& property, DirectX::XMFLOAT4 color)
 		{
-			colors.insert(std::make_pair(GetHash(property), color));
-		}
-		void AddTexture(std::string property, std::string textureName)
-		{
-			textureNames.insert(std::make_pair(GetHash(property), textureName));
+			m_colors.insert(std::make_pair(GetHash(property), color));
 		}
 
-		DirectX::XMFLOAT4 GetColor(size_t propertyHash)
+		void AddTexture(const std::string& property, const std::string& textureName)
 		{
-			return colors[propertyHash];
+			m_textureNames.insert(std::make_pair(GetHash(property), textureName));
 		}
-		DirectX::XMFLOAT4 GetColor(std::string property)
+
+		DirectX::XMFLOAT4 GetColor(const std::size_t propertyHash)
+		{
+			return m_colors[propertyHash];
+		}
+
+		DirectX::XMFLOAT4 GetColor(const std::string& property)
 		{
 			return GetColor(GetHash(property));
 		}
 
-		std::string GetTexture(size_t propertyHash)
+		std::string GetTexture(const std::size_t propertyHash)
 		{
-			return textureNames[propertyHash];
+			return m_textureNames[propertyHash];
 		}
-		std::string GetTexture(std::string property)
+
+		std::string GetTexture(const std::string& property)
 		{
 			return GetTexture(GetHash(property));
 		}
 
-		bool operator ==(const std::string& a)
+		bool operator ==(const std::string& a) const
 		{
 			return name == a;
 		}
@@ -166,11 +174,12 @@ namespace uem
 		struct Mesh
 		{
 			std::vector<X> vertexDatas;
-			std::vector<uint32_t> indexs;
-			int materialNo;
+			std::vector<uint32_t> indexes;
+			int materialNo{};
 		};
-		std::vector<Mesh> meshs;
-		std::vector<Material> materials;
+
+		std::vector<Mesh> m_meshes;
+		std::vector<Material> m_materials;
 
 		void LoadAscii(std::string filename)
 		{
@@ -189,38 +198,38 @@ namespace uem
 			//フォーマットエラーチェック
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
-			int totalByte = 0;
+			auto totalByte = 0;
 			auto formatSizes = VertexFormatSizes();
-			for (int i = 0; i < formatSizes.size(); i++)
+			for (auto i = 0; i < formatSizes.size(); i++)
 				if (vertexFormat & formatSizes[i].first)
 					totalByte += formatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
-				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
+				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
 			}
 
-			for (int i = 0; i < modelCount; i++)
+			for (auto i = 0; i < modelCount; i++)
 			{
 				Mesh model;
 				//頂点情報読み込み
 				int vertexCount;
 				ifs >> vertexCount;
-				for (int j = 0; j < vertexCount; j++)
+				for (auto j = 0; j < vertexCount; j++)
 				{
 					uint8_t* rawData = new uint8_t[sizeof(X)];
-					int rawCnt = 0;
+					auto rawCnt = 0;
 
-					for (int i = 0; i < formatSizes.size(); i++)
+					for (auto i2 = 0; i2 < formatSizes.size(); i2++)
 					{
-						if (vertexFormat & formatSizes[i].first)
+						if (vertexFormat & formatSizes[i2].first)
 						{
 							float tmpData[4];
-							int dataSize = formatSizes[i].second / 4;
-							for (int j = 0; j < dataSize; j++)
-								ifs >> tmpData[j];
-							memcpy(&rawData[rawCnt], tmpData, formatSizes[i].second);
-							rawCnt += formatSizes[i].second;
+							auto dataSize = formatSizes[i2].second / 4;
+							for (auto i1 = 0; i1 < dataSize; i1++)
+								ifs >> tmpData[i1];
+							memcpy(&rawData[rawCnt], tmpData, formatSizes[i2].second);
+							rawCnt += formatSizes[i2].second;
 						}
 					}
 
@@ -233,10 +242,10 @@ namespace uem
 				//インデックス読み込み
 				int indexCount;
 				ifs >> indexCount;
-				model.indexs.resize(indexCount);
-				for (int j = 0; j < indexCount; j++)
+				model.indexes.resize(indexCount);
+				for (auto j = 0; j < indexCount; j++)
 				{
-					ifs >> model.indexs[j];
+					ifs >> model.indexes[j];
 				}
 
 				//マテリアルの読み込み
@@ -244,7 +253,7 @@ namespace uem
 				ifs >> material.name;
 				int colorCount;
 				ifs >> colorCount;
-				for (int i = 0; i < colorCount; i++)
+				for (auto i1 = 0; i1 < colorCount; i1++)
 				{
 					std::string propertyName;
 					ifs >> propertyName;
@@ -255,7 +264,7 @@ namespace uem
 
 				int textureCount;
 				ifs >> textureCount;
-				for (int i = 0; i < textureCount; i++)
+				for (auto i1 = 0; i1 < textureCount; i1++)
 				{
 					std::string propertyName;
 					ifs >> propertyName;
@@ -264,19 +273,19 @@ namespace uem
 					material.AddTexture(propertyName, filename + "/" + textureName);
 				}
 
-				int materialNo = -1;
-				for (int j = 0; j < static_cast<int>(materials.size()); j++)
+				auto materialNo = -1;
+				for (auto j = 0; j < static_cast<int>(m_materials.size()); j++)
 				{
-					if (materials[j] == material.name)
+					if (m_materials[j] == material.name)
 						materialNo = j;
 				}
 				if (materialNo == -1)
 				{
-					materialNo = static_cast<int>(materials.size());
-					materials.push_back(material);
+					materialNo = static_cast<int>(m_materials.size());
+					m_materials.push_back(material);
 				}
 				model.materialNo = materialNo;
-				meshs.push_back(model);
+				m_meshes.push_back(model);
 			}
 		}
 
@@ -295,18 +304,18 @@ namespace uem
 			//フォーマットエラーチェック
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
-			int totalByte = 0; //BoneIndex & BoneWeight
+			auto totalByte = 0; //BoneIndex & BoneWeight
 			auto formatSizes = VertexFormatSizes();
-			for (int i = 0; i < formatSizes.size(); i++)
+			for (auto i = 0; i < formatSizes.size(); i++)
 				if (vertexFormat & formatSizes[i].first)
 					totalByte += formatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
-				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
+				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
 			}
 
-			for (int i = 0; i < modelCount; i++)
+			for (auto i = 0; i < modelCount; i++)
 			{
 				Mesh model;
 				//頂点情報読み込み
@@ -318,8 +327,8 @@ namespace uem
 				//インデックス読み込み
 				uint32_t indexCount;
 				fileStream.Read(&indexCount, sizeof(uint32_t));
-				model.indexs.resize(indexCount);
-				fileStream.Read(&model.indexs[0], sizeof(uint32_t) * indexCount);
+				model.indexes.resize(indexCount);
+				fileStream.Read(&model.indexes[0], sizeof(uint32_t) * indexCount);
 
 				//マテリアルの読み込み
 				Material material;
@@ -330,7 +339,7 @@ namespace uem
 
 				uint16_t colorCount;
 				fileStream.Read(&colorCount, sizeof(uint16_t));
-				for (int i = 0; i < colorCount; i++)
+				for (auto i1 = 0; i1 < colorCount; i1++)
 				{
 					std::string propertyName;
 					uint16_t propertyNameCount;
@@ -345,7 +354,7 @@ namespace uem
 
 				uint16_t textureCount;
 				fileStream.Read(&textureCount, sizeof(uint16_t));
-				for (int i = 0; i < textureCount; i++)
+				for (auto i1 = 0; i1 < textureCount; i1++)
 				{
 					std::string propertyName;
 					uint16_t propertyNameCount;
@@ -356,7 +365,8 @@ namespace uem
 					std::string textureName;
 					uint16_t textureNameCount;
 					fileStream.Read(&textureNameCount, sizeof(uint16_t));
-					if (textureNameCount == 0) {
+					if (textureNameCount == 0)
+					{
 						material.AddTexture(propertyName, "null");
 						continue;
 					}
@@ -365,19 +375,19 @@ namespace uem
 					material.AddTexture(propertyName, filename + "/" + textureName);
 				}
 
-				int materialNo = -1;
-				for (int j = 0; j < static_cast<int>(materials.size()); j++)
+				auto materialNo = -1;
+				for (auto j = 0; j < static_cast<int>(m_materials.size()); j++)
 				{
-					if (materials[j] == material.name)
+					if (m_materials[j] == material.name)
 						materialNo = j;
 				}
 				if (materialNo == -1)
 				{
-					materialNo = static_cast<int>(materials.size());
-					materials.push_back(material);
+					materialNo = static_cast<int>(m_materials.size());
+					m_materials.push_back(material);
 				}
 				model.materialNo = materialNo;
-				meshs.push_back(model);
+				m_meshes.push_back(model);
 			}
 		}
 	};
@@ -388,33 +398,35 @@ namespace uem
 		struct Mesh
 		{
 			std::vector<X> vertexDatas;
-			std::vector<uint32_t> indexs;
+			std::vector<uint32_t> indexes;
 			std::vector<std::pair<DirectX::XMMATRIX, Transform*>> bones;
 			int materialNo;
 		};
-		std::vector<Mesh> meshs;
-		std::vector<Material> materials;
-		std::unique_ptr<Transform> root;
-		std::unordered_map<size_t, std::unique_ptr<Transform>> transformMap;
+
+		std::vector<Mesh> m_meshes;
+		std::vector<Material> m_materials;
+		std::unique_ptr<Transform> m_root;
+		std::unordered_map<std::size_t, std::unique_ptr<Transform>> m_transformMap;
 
 	private:
 		void LoadHierarchyAscii(std::ifstream& ifs)
 		{
 			//モデルの階層構造を読み込み
-			auto active = root.get();
-			int transformCount = 0;
+			auto active = m_root.get();
+			auto transformCount = 0;
 			{
 				std::string tmp;
 				ifs >> tmp;
 				transformCount++;
-				active->name = tmp;
-				active->hash = std::hash<std::string>()(tmp);
-				ifs >> active->position.x >> active->position.y >> active->position.z;
+				active->m_name = tmp;
+				active->m_hash = std::hash<std::string>()(tmp);
+				ifs >> active->m_position.x >> active->m_position.y >> active->m_position.z;
 				DirectX::XMFLOAT3 euler;
 				ifs >> euler.x >> euler.y >> euler.z;
-				active->rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
-					DirectX::XMConvertToRadians(euler.y), DirectX::XMConvertToRadians(euler.z));
-				ifs >> active->scale.x >> active->scale.y >> active->scale.z;
+				active->m_rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
+				                                                               DirectX::XMConvertToRadians(euler.y),
+				                                                               DirectX::XMConvertToRadians(euler.z));
+				ifs >> active->m_scale.x >> active->m_scale.y >> active->m_scale.z;
 			}
 			while (transformCount != 0)
 			{
@@ -423,32 +435,32 @@ namespace uem
 				if (tmp == "ChildEndTransform")
 				{
 					transformCount--;
-					active = active->parent;
+					active = active->m_parent;
 					continue;
 				}
-				else
-					transformCount++;
-				auto newTrans = std::unique_ptr<Transform>(new Transform());
-				newTrans->name = tmp;
-				newTrans->hash = std::hash<std::string>()(tmp);
-				ifs >> newTrans->position.x >> newTrans->position.y >> newTrans->position.z;
+				transformCount++;
+				auto newTrans = std::make_unique<Transform>();
+				newTrans->m_name = tmp;
+				newTrans->m_hash = std::hash<std::string>()(tmp);
+				ifs >> newTrans->m_position.x >> newTrans->m_position.y >> newTrans->m_position.z;
 
 				DirectX::XMFLOAT3 euler;
 				ifs >> euler.x >> euler.y >> euler.z;
-				newTrans->rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
-					DirectX::XMConvertToRadians(euler.y), DirectX::XMConvertToRadians(euler.z));
-				ifs >> newTrans->scale.x >> newTrans->scale.y >> newTrans->scale.z;
-				newTrans->parent = active;
-				active->child.push_back(newTrans.get());
+				newTrans->m_rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
+				                                                                 DirectX::XMConvertToRadians(euler.y),
+				                                                                 DirectX::XMConvertToRadians(euler.z));
+				ifs >> newTrans->m_scale.x >> newTrans->m_scale.y >> newTrans->m_scale.z;
+				newTrans->m_parent = active;
+				active->m_child.push_back(newTrans.get());
 				active = newTrans.get();
-				transformMap.insert(std::make_pair(newTrans->hash, std::move(newTrans)));
+				m_transformMap.insert(std::make_pair(newTrans->m_hash, std::move(newTrans)));
 			}
 		}
 
 		void LoadHierarchyBinary(FileStream& fileStream)
 		{
-			auto active = root.get();
-			int transformCount = 0;
+			auto active = m_root.get();
+			auto transformCount = 0;
 			{
 				std::string tmp;
 				short tmpCount;
@@ -456,14 +468,15 @@ namespace uem
 				tmp.resize(tmpCount);
 				fileStream.Read(&tmp[0], sizeof(char) * tmpCount);
 				transformCount++;
-				active->name = tmp;
-				active->hash = std::hash<std::string>()(tmp);
-				fileStream.Read(&active->position, sizeof(float) * 3);
+				active->m_name = tmp;
+				active->m_hash = std::hash<std::string>()(tmp);
+				fileStream.Read(&active->m_position, sizeof(float) * 3);
 				DirectX::XMFLOAT3 euler;
 				fileStream.Read(&euler, sizeof(float) * 3);
-				active->rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
-					DirectX::XMConvertToRadians(euler.y), DirectX::XMConvertToRadians(euler.z));
-				fileStream.Read(&active->scale, sizeof(float) * 3);
+				active->m_rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
+				                                                               DirectX::XMConvertToRadians(euler.y),
+				                                                               DirectX::XMConvertToRadians(euler.z));
+				fileStream.Read(&active->m_scale, sizeof(float) * 3);
 			}
 			while (transformCount != 0)
 			{
@@ -473,34 +486,35 @@ namespace uem
 				if (tmpCount == -1)
 				{
 					transformCount--;
-					active = active->parent;
+					active = active->m_parent;
 					continue;
 				}
-				else
-					transformCount++;
+				transformCount++;
 				tmp.resize(tmpCount);
 				fileStream.Read(&tmp[0], sizeof(char) * tmpCount);
 
-				auto newTrans = std::unique_ptr<Transform>(new Transform());
-				newTrans->name = tmp;
-				newTrans->hash = std::hash<std::string>()(tmp);
+				auto newTrans = std::make_unique<Transform>();
+				newTrans->m_name = tmp;
+				newTrans->m_hash = std::hash<std::string>()(tmp);
 
-				fileStream.Read(&newTrans->position, sizeof(float) * 3);
+				fileStream.Read(&newTrans->m_position, sizeof(float) * 3);
 				DirectX::XMFLOAT3 euler;
 				fileStream.Read(&euler, sizeof(float) * 3);
-				newTrans->rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
-					DirectX::XMConvertToRadians(euler.y), DirectX::XMConvertToRadians(euler.z));
-				fileStream.Read(&newTrans->scale, sizeof(float) * 3);
-				newTrans->parent = active;
-				active->child.push_back(newTrans.get());
+				newTrans->m_rotation = DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(euler.x),
+				                                                                 DirectX::XMConvertToRadians(euler.y),
+				                                                                 DirectX::XMConvertToRadians(euler.z));
+				fileStream.Read(&newTrans->m_scale, sizeof(float) * 3);
+				newTrans->m_parent = active;
+				active->m_child.push_back(newTrans.get());
 				active = newTrans.get();
-				transformMap.insert(std::make_pair(newTrans->hash, std::move(newTrans)));
+				m_transformMap.insert(std::make_pair(newTrans->m_hash, std::move(newTrans)));
 			}
 		}
+
 	public:
 		void LoadAscii(std::string filename)
 		{
-			root.reset(new Transform);
+			m_root.reset(new Transform);
 
 			std::ifstream ifs(filename);
 			auto lastSlash = filename.find_last_of('/');
@@ -519,38 +533,38 @@ namespace uem
 			//フォーマットエラーチェック
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
-			int totalByte = 32; //BoneIndex & BoneWeight
+			auto totalByte = 32; //BoneIndex & BoneWeight
 			auto formatSizes = VertexFormatSizes();
-			for (int i = 0; i < formatSizes.size(); i++)
+			for (auto i = 0; i < formatSizes.size(); i++)
 				if (vertexFormat & formatSizes[i].first)
 					totalByte += formatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
-				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
+				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
 			}
 
-			for (int i = 0; i < modelCount; i++)
+			for (auto i = 0; i < modelCount; i++)
 			{
 				Mesh model;
 				//頂点情報読み込み
 				int vertexCount;
 				ifs >> vertexCount;
-				for (int j = 0; j < vertexCount; j++)
+				for (auto j = 0; j < vertexCount; j++)
 				{
 					uint8_t* rawData = new uint8_t[sizeof(X)];
-					int rawCnt = 0;
+					auto rawCnt = 0;
 
-					for (int i = 0; i < formatSizes.size(); i++)
+					for (auto i1 = 0; i1 < formatSizes.size(); i1++)
 					{
-						if (vertexFormat & formatSizes[i].first)
+						if (vertexFormat & formatSizes[i1].first)
 						{
 							float tmpData[4];
-							int dataSize = formatSizes[i].second / 4;
-							for (int j = 0; j < dataSize; j++)
-								ifs >> tmpData[j];
-							memcpy(&rawData[rawCnt], tmpData, formatSizes[i].second);
-							rawCnt += formatSizes[i].second;
+							auto dataSize = formatSizes[i1].second / 4;
+							for (auto i2 = 0; i2 < dataSize; i2++)
+								ifs >> tmpData[i2];
+							memcpy(&rawData[rawCnt], tmpData, formatSizes[i1].second);
+							rawCnt += formatSizes[i1].second;
 						}
 					}
 					DirectX::XMINT4 boneIndex;
@@ -569,16 +583,16 @@ namespace uem
 				//インデックス読み込み
 				int indexCount;
 				ifs >> indexCount;
-				model.indexs.resize(indexCount);
-				for (int j = 0; j < indexCount; j++)
+				model.indexes.resize(indexCount);
+				for (auto j = 0; j < indexCount; j++)
 				{
-					ifs >> model.indexs[j];
+					ifs >> model.indexes[j];
 				}
 
 				//ベースポーズ読み込み
 				int basePoseCount;
 				ifs >> basePoseCount;
-				for (int j = 0; j < basePoseCount; j++)
+				for (auto j = 0; j < basePoseCount; j++)
 				{
 					std::string name;
 					ifs >> name;
@@ -589,7 +603,7 @@ namespace uem
 						>> tmp.r[2].m128_f32[0] >> tmp.r[2].m128_f32[1] >> tmp.r[2].m128_f32[2] >> tmp.r[2].m128_f32[3]
 						>> tmp.r[3].m128_f32[0] >> tmp.r[3].m128_f32[1] >> tmp.r[3].m128_f32[2] >> tmp.r[3].m128_f32[3];
 
-					auto trans = root->Find(name);
+					auto trans = m_root->Find(name);
 					model.bones.push_back(std::make_pair(XMMatrixTranspose(tmp), trans));
 				}
 
@@ -598,7 +612,7 @@ namespace uem
 				ifs >> material.name;
 				int colorCount;
 				ifs >> colorCount;
-				for (int i = 0; i < colorCount; i++)
+				for (auto i1 = 0; i1 < colorCount; i1++)
 				{
 					std::string propertyName;
 					ifs >> propertyName;
@@ -609,7 +623,7 @@ namespace uem
 
 				int textureCount;
 				ifs >> textureCount;
-				for (int i = 0; i < textureCount; i++)
+				for (auto i1 = 0; i1 < textureCount; i1++)
 				{
 					std::string propertyName;
 					ifs >> propertyName;
@@ -618,25 +632,25 @@ namespace uem
 					material.AddTexture(propertyName, filename + "/" + textureName);
 				}
 
-				int materialNo = -1;
-				for (int j = 0; j < static_cast<int>(materials.size()); j++)
+				auto materialNo = -1;
+				for (auto j = 0; j < static_cast<int>(m_materials.size()); j++)
 				{
-					if (materials[j] == material.name)
+					if (m_materials[j] == material.name)
 						materialNo = j;
 				}
 				if (materialNo == -1)
 				{
-					materialNo = static_cast<int>(materials.size());
-					materials.push_back(material);
+					materialNo = static_cast<int>(m_materials.size());
+					m_materials.push_back(material);
 				}
 				model.materialNo = materialNo;
-				meshs.push_back(model);
+				m_meshes.push_back(model);
 			}
 		}
 
 		void LoadBinary(std::string filename)
 		{
-			root.reset(new Transform());
+			m_root.reset(new Transform());
 
 			FileStream fileStream(filename.c_str());
 			auto lastSlash = filename.find_last_of('/');
@@ -653,18 +667,18 @@ namespace uem
 			//フォーマットエラーチェック
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
-			int totalByte = 32; //BoneIndex & BoneWeight
+			auto totalByte = 32; //BoneIndex & BoneWeight
 			auto formatSizes = VertexFormatSizes();
-			for (int i = 0; i < formatSizes.size(); i++)
+			for (auto i = 0; i < formatSizes.size(); i++)
 				if (vertexFormat & formatSizes[i].first)
 					totalByte += formatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
-				std::string errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
+				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
 					"The required size is " + std::to_string(totalByte) + " bytes";
 			}
 
-			for (int i = 0; i < modelCount; i++)
+			for (auto i = 0; i < modelCount; i++)
 			{
 				Mesh model;
 				//頂点情報読み込み
@@ -676,13 +690,13 @@ namespace uem
 				//インデックス読み込み
 				uint32_t indexCount;
 				fileStream.Read(&indexCount, sizeof(uint32_t));
-				model.indexs.resize(indexCount);
-				fileStream.Read(&model.indexs[0], sizeof(uint32_t) * indexCount);
+				model.indexes.resize(indexCount);
+				fileStream.Read(&model.indexes[0], sizeof(uint32_t) * indexCount);
 
 				//ベースポーズ読み込み
 				uint16_t basePoseCount;
 				fileStream.Read(&basePoseCount, sizeof(uint16_t));
-				for (int j = 0; j < basePoseCount; j++)
+				for (auto j = 0; j < basePoseCount; j++)
 				{
 					std::string name;
 					uint16_t nameCount;
@@ -693,7 +707,7 @@ namespace uem
 					DirectX::XMMATRIX tmp;
 					fileStream.Read(&tmp, sizeof(float) * 16);
 
-					auto trans = root->Find(name);
+					auto trans = m_root->Find(name);
 					model.bones.push_back(std::make_pair(XMMatrixTranspose(tmp), trans));
 				}
 
@@ -706,7 +720,7 @@ namespace uem
 
 				uint16_t colorCount;
 				fileStream.Read(&colorCount, sizeof(uint16_t));
-				for (int i = 0; i < colorCount; i++)
+				for (auto i1 = 0; i1 < colorCount; i1++)
 				{
 					std::string propertyName;
 					uint16_t propertyNameCount;
@@ -721,7 +735,7 @@ namespace uem
 
 				uint16_t textureCount;
 				fileStream.Read(&textureCount, sizeof(uint16_t));
-				for (int i = 0; i < textureCount; i++)
+				for (auto i1 = 0; i1 < textureCount; i1++)
 				{
 					std::string propertyName;
 					uint16_t propertyNameCount;
@@ -732,7 +746,8 @@ namespace uem
 					std::string textureName;
 					uint16_t textureNameCount;
 					fileStream.Read(&textureNameCount, sizeof(uint16_t));
-					if (textureNameCount == 0) {
+					if (textureNameCount == 0)
+					{
 						material.AddTexture(propertyName, "null");
 						continue;
 					}
@@ -741,19 +756,19 @@ namespace uem
 					material.AddTexture(propertyName, filename + "/" + textureName);
 				}
 
-				int materialNo = -1;
-				for (int j = 0; j < static_cast<int>(materials.size()); j++)
+				auto materialNo = -1;
+				for (auto j = 0; j < static_cast<int>(m_materials.size()); j++)
 				{
-					if (materials[j] == material.name)
+					if (m_materials[j] == material.name)
 						materialNo = j;
 				}
 				if (materialNo == -1)
 				{
-					materialNo = static_cast<int>(materials.size());
-					materials.push_back(material);
+					materialNo = static_cast<int>(m_materials.size());
+					m_materials.push_back(material);
 				}
 				model.materialNo = materialNo;
-				meshs.push_back(model);
+				m_meshes.push_back(model);
 			}
 		}
 	};
@@ -765,12 +780,12 @@ namespace uem
 			std::vector<float> times;
 			std::vector<float> keys;
 
-			float Lerp(float f1, float f2, float t)
+			static float Lerp(const float f1, const float f2, const float t)
 			{
 				return f1 + (f2 - f1) * t;
 			}
 
-			float GetValue(float time)
+			float GetValue(const float time)
 			{
 				if (times.size() == 1)
 					return keys[0];
@@ -779,7 +794,7 @@ namespace uem
 				if (time > times[times.size() - 1])
 					return keys[keys.size() - 1];
 
-				int index = 0;
+				auto index = 0UL;
 				for (; index < times.size() - 1; index++)
 				{
 					if (times[index] > time)
@@ -793,20 +808,24 @@ namespace uem
 
 		struct Animation
 		{
-			uem::Transform* transform = nullptr;
+			Transform* transform = nullptr;
 			Curve curves[10];
 
-			void SetTransform(float time)
+			void SetTransform(const float time)
 			{
-				DirectX::XMFLOAT3 position = DirectX::XMFLOAT3(curves[0].GetValue(time), curves[1].GetValue(time), curves[2].GetValue(time));
-				DirectX::XMVECTOR rotation = DirectX::XMVectorSet(curves[3].GetValue(time), curves[4].GetValue(time), curves[5].GetValue(time), curves[6].GetValue(time));
-				DirectX::XMFLOAT3 scale = DirectX::XMFLOAT3(curves[7].GetValue(time), curves[8].GetValue(time), curves[9].GetValue(time));
+				const auto position = DirectX::XMFLOAT3(curves[0].GetValue(time), curves[1].GetValue(time),
+				                                        curves[2].GetValue(time));
+				const auto rotation = DirectX::XMVectorSet(curves[3].GetValue(time), curves[4].GetValue(time),
+				                                     curves[5].GetValue(time), curves[6].GetValue(time));
+				const auto scale = DirectX::XMFLOAT3(curves[7].GetValue(time), curves[8].GetValue(time),
+				                               curves[9].GetValue(time));
 
-				transform->position = position;
-				transform->rotation = rotation;
-				transform->scale = scale;
+				transform->m_position = position;
+				transform->m_rotation = rotation;
+				transform->m_scale = scale;
 			}
 		};
+
 	private:
 		std::vector<Animation> animationList;
 		float maxAnimationTime = 0;
@@ -814,38 +833,38 @@ namespace uem
 		void LoadAscii(std::string filename, Transform* root)
 		{
 			std::ifstream ifs(filename);
-			auto lastSlash = filename.find_last_of('/');
+			const auto lastSlash = filename.find_last_of('/');
 			filename.erase(lastSlash);
 			assert(ifs.is_open());
 
 			int animationCount;
 			ifs >> animationCount;
 			animationList.resize(animationCount);
-			for (int i = 0; i < animationCount; i++)
+			for (auto i = 0; i < animationCount; i++)
 			{
 				auto& anim = animationList[i];
 				std::string transformName;
 				ifs >> transformName;
 				anim.transform = root->Find(transformName);
-				for (int j = 0; j < 10; j++)
+				for (auto& curve : anim.curves)
 				{
 					int keyCount;
 					ifs >> keyCount;
-					anim.curves[j].times.resize(keyCount);
-					anim.curves[j].keys.resize(keyCount);
-					for (int k = 0; k < keyCount; k++) 
+					curve.times.resize(keyCount);
+					curve.keys.resize(keyCount);
+					for (auto k = 0; k < keyCount; k++)
 					{
-						ifs >> anim.curves[j].times[k];
-						if (anim.curves[j].times[k] > maxAnimationTime)
-							maxAnimationTime = anim.curves[j].times[k];
+						ifs >> curve.times[k];
+						if (curve.times[k] > maxAnimationTime)
+							maxAnimationTime = curve.times[k];
 					}
-					for (int k = 0; k < keyCount; k++)
-						ifs >> anim.curves[j].keys[k];
+					for (auto k = 0; k < keyCount; k++)
+						ifs >> curve.keys[k];
 				}
 			}
 		}
 
-		void LoadBinary(std::string filename, Transform* root)
+		void LoadBinary(const std::string& filename, Transform* root)
 		{
 			FileStream fileStream(filename.c_str());
 
@@ -853,33 +872,33 @@ namespace uem
 			fileStream.Read(&animationCount, sizeof(uint32_t));
 
 			animationList.resize(animationCount);
-			for (uint16_t i = 0; i < animationCount; i++)
+			for (uint32_t i = 0; i < animationCount; i++)
 			{
 				auto& anim = animationList[i];
 				std::string transformName;
 				uint16_t transformNameCount;
 				fileStream.Read(&transformNameCount, sizeof(uint16_t));
-				transformName.resize((size_t)transformNameCount);
+				transformName.resize(static_cast<std::size_t>(transformNameCount));
 				fileStream.Read(&transformName[0], sizeof(char) * transformNameCount);
 				anim.transform = root->Find(transformName);
-				for (int j = 0; j < 10; j++)
+				for (auto& curve : anim.curves)
 				{
 					uint32_t keyCount;
 					fileStream.Read(&keyCount, sizeof(uint32_t));
-					anim.curves[j].times.resize(keyCount);
-					anim.curves[j].keys.resize(keyCount);
-					fileStream.Read(&anim.curves[j].times[0], sizeof(float) * keyCount);
+					curve.times.resize(keyCount);
+					curve.keys.resize(keyCount);
+					fileStream.Read(&curve.times[0], sizeof(float) * keyCount);
 					for (uint32_t t = 0; t < keyCount; t++)
 					{
-						if (anim.curves[j].times[t] > maxAnimationTime)
-							maxAnimationTime = anim.curves[j].times[t];
+						if (curve.times[t] > maxAnimationTime)
+							maxAnimationTime = curve.times[t];
 					}
-					fileStream.Read(&anim.curves[j].keys[0], sizeof(float) * keyCount);
+					fileStream.Read(&curve.keys[0], sizeof(float) * keyCount);
 				}
 			}
 		}
 
-		void SetTransform(float time)
+		void SetTransform(const float time)
 		{
 			for (auto& animation : animationList)
 				animation.SetTransform(time);

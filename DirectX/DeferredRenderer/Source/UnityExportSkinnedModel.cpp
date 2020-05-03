@@ -24,16 +24,16 @@ void UnityExportSkinnedModel::LoadAscii(string filename)
 	uemData.LoadAscii(filename);
 
 	//VertexBuffer IndexBufferçÏê¨
-	for (auto& mesh : uemData.meshs)
+	for (auto& mesh : uemData.m_meshes)
 	{
 		ModelData tmpData;
 		tmpData.vb.Attach(g_DX11Manager.CreateVertexBuffer(mesh.vertexDatas.data(), (UINT)mesh.vertexDatas.size()));
-		tmpData.ib.Attach(g_DX11Manager.CreateIndexBuffer(mesh.indexs.data(), (UINT)mesh.indexs.size()));
+		tmpData.ib.Attach(g_DX11Manager.CreateIndexBuffer(mesh.indexes.data(), (UINT)mesh.indexes.size()));
 		models.push_back(tmpData);
 	}
 
 	//TextureLoad
-	for (auto& material : uemData.materials)
+	for (auto& material : uemData.m_materials)
 	{
 		Material tmpMaterial;
 		tmpMaterial.albedoTexture.Attach(g_DX11Manager.CreateTextureFromFile(material.GetTexture("_MainTex")));
@@ -46,16 +46,16 @@ void UnityExportSkinnedModel::LoadBinary(string filename)
 	uemData.LoadBinary(filename);
 
 	//VertexBuffer IndexBufferçÏê¨
-	for (auto& mesh : uemData.meshs)
+	for (auto& mesh : uemData.m_meshes)
 	{
 		ModelData tmpData;
 		tmpData.vb.Attach(g_DX11Manager.CreateVertexBuffer(mesh.vertexDatas.data(), (UINT)mesh.vertexDatas.size()));
-		tmpData.ib.Attach(g_DX11Manager.CreateIndexBuffer(mesh.indexs.data(), (UINT)mesh.indexs.size()));
+		tmpData.ib.Attach(g_DX11Manager.CreateIndexBuffer(mesh.indexes.data(), (UINT)mesh.indexes.size()));
 		models.push_back(tmpData);
 	}
 
 	//TextureLoad
-	for (auto& material : uemData.materials)
+	for (auto& material : uemData.m_materials)
 	{
 		Material tmpMaterial;
 		tmpMaterial.albedoTexture.Attach(g_DX11Manager.CreateTextureFromFile(material.GetTexture("_MainTex")));
@@ -70,8 +70,8 @@ void UnityExportSkinnedModel::Draw()
 
 	g_DX11Manager.SetInputLayout(il.Get());
 
-	for(int j=0;j<uemData.meshs.size();j++){
-		auto& model = uemData.meshs[j];
+	for(int j=0;j<uemData.m_meshes.size();j++){
+		auto& model = uemData.m_meshes[j];
 		//É{Å[ÉìçsóÒÇçÏÇÈ
 		for (int i = 0; i < model.bones.size(); i++)
 		{
@@ -88,6 +88,6 @@ void UnityExportSkinnedModel::Draw()
 			g_DX11Manager.SetTexture2D(0, materials[model.materialNo].albedoTexture.Get());
 
 		//DrawCall
-		g_DX11Manager.DrawIndexed(static_cast<UINT>(model.indexs.size()));
+		g_DX11Manager.DrawIndexed(static_cast<UINT>(model.indexes.size()));
 	}
 }

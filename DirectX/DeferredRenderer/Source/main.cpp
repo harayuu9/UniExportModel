@@ -32,7 +32,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 
 	uem::SkinnedAnimation animation;
 	//animation.LoadAscii("Assets/Models/JUMP00anim.txt", skinnedModel.uemData.root.get());
-	animation.LoadBinary("Assets/Models/JUMP00anim.bin", skinnedModel.uemData.root.get());
+	animation.LoadBinary("Assets/Models/JUMP00anim.bin", skinnedModel.uemData.m_root.get());
 	MSG msg = { 0 };
 	while (true)
 	{
