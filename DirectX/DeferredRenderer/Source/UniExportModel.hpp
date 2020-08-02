@@ -1,9 +1,8 @@
-// ReSharper disable CppClangTidyBugproneNarrowingConversions
 #pragma once
 #include <cstring>
 #include <DirectXMath.h>
 #include <memory>
-#include <stdio.h>
+#include <cstdio>
 #include <fstream>
 #include <string>
 #include <unordered_map>
@@ -100,23 +99,21 @@ namespace uem
 		COLOR = 0x0800,
 	};
 
-	static std::vector<std::pair<int, int>> VertexFormatSizes()
+	static const std::vector<std::pair<int, int>> VertexFormatSizes
 	{
-		std::vector<std::pair<int, int>> result;
-		result.emplace_back(POSITION, 4 * 3);
-		result.emplace_back(NORMAL, 4 * 3);
-		result.emplace_back(TANGENT, 4 * 3);
-		result.emplace_back(UV1, 4 * 2);
-		result.emplace_back(UV2, 4 * 2);
-		result.emplace_back(UV3, 4 * 2);
-		result.emplace_back(UV4, 4 * 2);
-		result.emplace_back(UV5, 4 * 2);
-		result.emplace_back(UV6, 4 * 2);
-		result.emplace_back(UV7, 4 * 2);
-		result.emplace_back(UV8, 4 * 2);
-		result.emplace_back(COLOR, 4 * 4);
-		return result;
-	}
+		{POSITION, 4 * 3},
+		{NORMAL, 4 * 3},
+		{TANGENT, 4 * 3},
+		{UV1, 4 * 2},
+		{UV2, 4 * 2},
+		{UV3, 4 * 2},
+		{UV4, 4 * 2},
+		{UV5, 4 * 2},
+		{UV6, 4 * 2},
+		{UV7, 4 * 2},
+		{UV8, 4 * 2},
+		{COLOR, 4 * 4},
+	};
 
 	struct Material
 	{
@@ -199,10 +196,9 @@ namespace uem
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
 			auto totalByte = 0;
-			auto formatSizes = VertexFormatSizes();
-			for (auto i = 0; i < formatSizes.size(); i++)
-				if (vertexFormat & formatSizes[i].first)
-					totalByte += formatSizes[i].second;
+			for (auto i = 0; i < VertexFormatSizes.size(); i++)
+				if (vertexFormat & VertexFormatSizes[i].first)
+					totalByte += VertexFormatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
 				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
@@ -220,16 +216,16 @@ namespace uem
 					uint8_t* rawData = new uint8_t[sizeof(X)];
 					auto rawCnt = 0;
 
-					for (auto i2 = 0; i2 < formatSizes.size(); i2++)
+					for (auto i2 = 0; i2 < VertexFormatSizes.size(); i2++)
 					{
-						if (vertexFormat & formatSizes[i2].first)
+						if (vertexFormat & VertexFormatSizes[i2].first)
 						{
 							float tmpData[4];
-							auto dataSize = formatSizes[i2].second / 4;
+							auto dataSize = VertexFormatSizes[i2].second / 4;
 							for (auto i1 = 0; i1 < dataSize; i1++)
 								ifs >> tmpData[i1];
-							memcpy(&rawData[rawCnt], tmpData, formatSizes[i2].second);
-							rawCnt += formatSizes[i2].second;
+							memcpy(&rawData[rawCnt], tmpData, VertexFormatSizes[i2].second);
+							rawCnt += VertexFormatSizes[i2].second;
 						}
 					}
 
@@ -305,10 +301,9 @@ namespace uem
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
 			auto totalByte = 0; //BoneIndex & BoneWeight
-			auto formatSizes = VertexFormatSizes();
-			for (auto i = 0; i < formatSizes.size(); i++)
-				if (vertexFormat & formatSizes[i].first)
-					totalByte += formatSizes[i].second;
+			for (auto i = 0; i < VertexFormatSizes.size(); i++)
+				if (vertexFormat & VertexFormatSizes[i].first)
+					totalByte += VertexFormatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
 				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
@@ -534,10 +529,9 @@ namespace uem
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
 			auto totalByte = 32; //BoneIndex & BoneWeight
-			auto formatSizes = VertexFormatSizes();
-			for (auto i = 0; i < formatSizes.size(); i++)
-				if (vertexFormat & formatSizes[i].first)
-					totalByte += formatSizes[i].second;
+			for (auto i = 0; i < VertexFormatSizes.size(); i++)
+				if (vertexFormat & VertexFormatSizes[i].first)
+					totalByte += VertexFormatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
 				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
@@ -555,16 +549,16 @@ namespace uem
 					uint8_t* rawData = new uint8_t[sizeof(X)];
 					auto rawCnt = 0;
 
-					for (auto i1 = 0; i1 < formatSizes.size(); i1++)
+					for (auto i1 = 0; i1 < VertexFormatSizes.size(); i1++)
 					{
-						if (vertexFormat & formatSizes[i1].first)
+						if (vertexFormat & VertexFormatSizes[i1].first)
 						{
 							float tmpData[4];
-							auto dataSize = formatSizes[i1].second / 4;
+							auto dataSize = VertexFormatSizes[i1].second / 4;
 							for (auto i2 = 0; i2 < dataSize; i2++)
 								ifs >> tmpData[i2];
-							memcpy(&rawData[rawCnt], tmpData, formatSizes[i1].second);
-							rawCnt += formatSizes[i1].second;
+							memcpy(&rawData[rawCnt], tmpData, VertexFormatSizes[i1].second);
+							rawCnt += VertexFormatSizes[i1].second;
 						}
 					}
 					DirectX::XMINT4 boneIndex;
@@ -668,10 +662,9 @@ namespace uem
 			std::vector<bool> formatFlg;
 			formatFlg.resize(12);
 			auto totalByte = 32; //BoneIndex & BoneWeight
-			auto formatSizes = VertexFormatSizes();
-			for (auto i = 0; i < formatSizes.size(); i++)
-				if (vertexFormat & formatSizes[i].first)
-					totalByte += formatSizes[i].second;
+			for (auto i = 0; i < VertexFormatSizes.size(); i++)
+				if (vertexFormat & VertexFormatSizes[i].first)
+					totalByte += VertexFormatSizes[i].second;
 			if (totalByte != sizeof(X))
 			{
 				auto errorLog = std::string(typeid(X).name()) + " is " + std::to_string(sizeof(X)) + "\n " +
