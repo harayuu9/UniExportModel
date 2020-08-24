@@ -140,6 +140,7 @@
   <ItemGroup>
     <ClInclude Include="Source\DirectX11Manager.h" />
     <ClInclude Include="Source\MyInput8.h" />
+    <ClInclude Include="Source\SampleDef.h" />
     <ClInclude Include="Source\UniExportModel.hpp" />
     <ClInclude Include="Source\UnityExportModel.h" />
     <ClInclude Include="Source\UnityExportSkinnedModel.h" />

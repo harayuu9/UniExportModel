@@ -1,6 +1,5 @@
 #pragma once
 #include <cstring>
-#include <DirectXMath.h>
 #include <memory>
 #include <cstdio>
 #include <fstream>
@@ -8,31 +7,13 @@
 #include <unordered_map>
 #include <vector>
 
+// サンプル用の定義
+#include "SampleDef.h"
+
 namespace uem {
-using Float2 = DirectX::XMFLOAT2;
-using Float3 = DirectX::XMFLOAT3;
-using Float4 = DirectX::XMFLOAT4;
-using Int4 = DirectX::XMINT4;
-using Vector4 = DirectX::XMVECTOR;
-using Matrix = DirectX::XMMATRIX;
-
-inline Vector4 MakeQuaternion(const Float3& degree)
-{
-    return DirectX::XMQuaternionRotationRollPitchYaw(DirectX::XMConvertToRadians(degree.x),
-        DirectX::XMConvertToRadians(degree.y),
-        DirectX::XMConvertToRadians(degree.z));
-}
-
-inline Matrix Transpose(const Matrix& matrix)
-{
-    return XMMatrixTranspose(matrix);
-}
 
 class FileStream
 {
-private:
-    char* m_data = nullptr;
-    char* m_activeData = nullptr;
 public:
     FileStream() = default;
 
@@ -44,11 +25,6 @@ public:
     FileStream(const FileStream&) = delete;
     FileStream& operator=(const FileStream&) = delete;
 
-    ~FileStream()
-    {
-        delete[] m_data;
-    }
-
     void Load(const char* filename)
     {
         FILE* fp;
@@ -58,9 +34,9 @@ public:
         fgetpos( fp, &pos );
         fseek( fp, 0, SEEK_SET );
 
-        m_data = new char[pos];
-        fread( m_data, sizeof( char ), pos, fp );
-        m_activeData = m_data;
+        m_data.reset( new char[pos] );
+        fread( m_data.get(), sizeof( char ), pos, fp );
+        m_activeData = m_data.get();
         fclose( fp );
     }
 
@@ -69,43 +45,13 @@ public:
         std::memcpy( data, m_activeData, size );
         m_activeData += size;
     }
+
+private:
+    std::unique_ptr<char[]> m_data = nullptr;
+    char* m_activeData = nullptr;
 };
 
-struct Transform
-{
-    Transform* m_parent = nullptr;
-    std::vector<Transform*> m_child;
-
-    std::size_t m_hash;
-    std::string m_name;
-    Float3 m_position;
-    Vector4 m_rotation;
-    Float3 m_scale;
-
-    Matrix LocalToWorldMatrix() const
-    {
-        auto localMtx = DirectX::XMMatrixScaling( m_scale.x, m_scale.y, m_scale.z ) *
-            DirectX::XMMatrixRotationQuaternion( m_rotation ) *
-            DirectX::XMMatrixTranslation( m_position.x, m_position.y, m_position.z );
-        if ( m_parent == nullptr )
-            return localMtx;
-        return localMtx * m_parent->LocalToWorldMatrix();
-    }
-
-    Transform* Find(const std::string& str)
-    {
-        if ( m_name == str )
-            return this;
-        for ( auto* t : m_child )
-        {
-            if ( auto* ret = t->Find( str ) )
-                return ret;
-        }
-        return nullptr;
-    }
-};
-
-enum Flg
+enum class Flg
 {
     POSITION = 0x0001,
     NORMAL = 0x0002,
@@ -121,20 +67,20 @@ enum Flg
     COLOR = 0x0800,
 };
 
-static const std::vector<std::pair<int, int>> VertexFormatSizes
+static const std::vector<std::pair<Flg, int>> VertexFormatSizes
 {
-    { POSITION, 4 * 3 },
-    { NORMAL, 4 * 3 },
-    { TANGENT, 4 * 3 },
-    { UV1, 4 * 2 },
-    { UV2, 4 * 2 },
-    { UV3, 4 * 2 },
-    { UV4, 4 * 2 },
-    { UV5, 4 * 2 },
-    { UV6, 4 * 2 },
-    { UV7, 4 * 2 },
-    { UV8, 4 * 2 },
-    { COLOR, 4 * 4 },
+    { Flg::POSITION, 4 * 3 },
+    { Flg::NORMAL, 4 * 3 },
+    { Flg::TANGENT, 4 * 3 },
+    { Flg::UV1, 4 * 2 },
+    { Flg::UV2, 4 * 2 },
+    { Flg::UV3, 4 * 2 },
+    { Flg::UV4, 4 * 2 },
+    { Flg::UV5, 4 * 2 },
+    { Flg::UV6, 4 * 2 },
+    { Flg::UV7, 4 * 2 },
+    { Flg::UV8, 4 * 2 },
+    { Flg::COLOR, 4 * 4 },
 };
 
 struct Material
@@ -219,7 +165,7 @@ struct Model
         formatFlg.resize( 12 );
         auto totalByte = 0;
         for ( auto i = 0; i < VertexFormatSizes.size(); i++ )
-            if ( vertexFormat & VertexFormatSizes[i].first )
+            if ( vertexFormat & static_cast<int>(VertexFormatSizes[i].first) )
                 totalByte += VertexFormatSizes[i].second;
         if ( totalByte != sizeof( X ) )
         {
@@ -240,7 +186,7 @@ struct Model
 
                 for ( auto i2 = 0; i2 < VertexFormatSizes.size(); i2++ )
                 {
-                    if ( vertexFormat & VertexFormatSizes[i2].first )
+                    if ( vertexFormat & static_cast<int>(VertexFormatSizes[i2].first) )
                     {
                         float tmpData[4];
                         auto dataSize = VertexFormatSizes[i2].second / 4;
@@ -324,7 +270,7 @@ struct Model
         formatFlg.resize( 12 );
         auto totalByte = 0; //BoneIndex & BoneWeight
         for ( auto i = 0; i < VertexFormatSizes.size(); i++ )
-            if ( vertexFormat & VertexFormatSizes[i].first )
+            if ( vertexFormat & static_cast<short>(VertexFormatSizes[i].first) )
                 totalByte += VertexFormatSizes[i].second;
         if ( totalByte != sizeof( X ) )
         {
@@ -440,7 +386,7 @@ private:
             ifs >> active->m_position.x >> active->m_position.y >> active->m_position.z;
             Float3 euler;
             ifs >> euler.x >> euler.y >> euler.z;
-            active->m_rotation = MakeQuaternion(euler);
+            active->m_rotation = MakeQuaternion( euler );
             ifs >> active->m_scale.x >> active->m_scale.y >> active->m_scale.z;
         }
         while ( transformCount != 0 )
@@ -461,7 +407,7 @@ private:
 
             Float3 euler;
             ifs >> euler.x >> euler.y >> euler.z;
-            newTrans->m_rotation = MakeQuaternion(euler);
+            newTrans->m_rotation = MakeQuaternion( euler );
             ifs >> newTrans->m_scale.x >> newTrans->m_scale.y >> newTrans->m_scale.z;
             newTrans->m_parent = active;
             active->m_child.push_back( newTrans.get() );
@@ -486,7 +432,7 @@ private:
             fileStream.Read( &active->m_position, sizeof( float ) * 3 );
             Float3 euler;
             fileStream.Read( &euler, sizeof( float ) * 3 );
-            active->m_rotation = MakeQuaternion(euler);
+            active->m_rotation = MakeQuaternion( euler );
             fileStream.Read( &active->m_scale, sizeof( float ) * 3 );
         }
         while ( transformCount != 0 )
@@ -511,7 +457,7 @@ private:
             fileStream.Read( &newTrans->m_position, sizeof( float ) * 3 );
             Float3 euler;
             fileStream.Read( &euler, sizeof( float ) * 3 );
-            newTrans->m_rotation = MakeQuaternion(euler);
+            newTrans->m_rotation = MakeQuaternion( euler );
             fileStream.Read( &newTrans->m_scale, sizeof( float ) * 3 );
             newTrans->m_parent = active;
             active->m_child.push_back( newTrans.get() );
@@ -523,7 +469,7 @@ private:
 public:
     void LoadAscii(std::string filename)
     {
-        m_root.reset( new Transform );
+        m_root = std::make_unique<Transform>();
 
         std::ifstream ifs( filename );
         auto lastSlash = filename.find_last_of( '/' );
@@ -544,7 +490,7 @@ public:
         formatFlg.resize( 12 );
         auto totalByte = 32; //BoneIndex & BoneWeight
         for ( auto i = 0; i < VertexFormatSizes.size(); i++ )
-            if ( vertexFormat & VertexFormatSizes[i].first )
+            if ( vertexFormat & static_cast<int>(VertexFormatSizes[i].first) )
                 totalByte += VertexFormatSizes[i].second;
         if ( totalByte != sizeof( X ) )
         {
@@ -565,7 +511,7 @@ public:
 
                 for ( auto i1 = 0; i1 < VertexFormatSizes.size(); i1++ )
                 {
-                    if ( vertexFormat & VertexFormatSizes[i1].first )
+                    if ( vertexFormat & static_cast<int>(VertexFormatSizes[i1].first) )
                     {
                         float tmpData[4];
                         auto dataSize = VertexFormatSizes[i1].second / 4;
@@ -606,17 +552,17 @@ public:
                 ifs >> name;
 
                 float tmp[16];
-                for (auto i = 0; i < 16; i++)
+                for ( auto i = 0; i < 16; i++ )
                     ifs >> tmp[i];
 
                 auto trans = m_root->Find( name );
-                model.bones.push_back( std::make_pair(  
-                    Matrix {
+                model.bones.push_back( std::make_pair(
+                    Matrix{
                         tmp[0], tmp[4], tmp[8], tmp[12],
                         tmp[1], tmp[5], tmp[9], tmp[13],
                         tmp[2], tmp[6], tmp[10], tmp[14],
                         tmp[3], tmp[7], tmp[11], tmp[15]
-                    } , trans ) );
+                    }, trans ) );
             }
 
             //マテリアルの読み込み
@@ -662,7 +608,7 @@ public:
 
     void LoadBinary(std::string filename)
     {
-        m_root.reset( new Transform() );
+        m_root = std::make_unique<Transform>();
 
         FileStream fileStream( filename.c_str() );
         auto lastSlash = filename.find_last_of( '/' );
@@ -681,7 +627,7 @@ public:
         formatFlg.resize( 12 );
         auto totalByte = 32; //BoneIndex & BoneWeight
         for ( auto i = 0; i < VertexFormatSizes.size(); i++ )
-            if ( vertexFormat & VertexFormatSizes[i].first )
+            if ( vertexFormat & static_cast<short>(VertexFormatSizes[i].first) )
                 totalByte += VertexFormatSizes[i].second;
         if ( totalByte != sizeof( X ) )
         {
@@ -825,12 +771,18 @@ struct SkinnedAnimation
 
         void SetTransform(const float time)
         {
-            const Float3 position = { curves[0].GetValue(time), curves[1].GetValue(time),
-                                                     curves[2].GetValue(time) };
-            const Vector4 rotation = { curves[3].GetValue(time), curves[4].GetValue(time),
-                                                        curves[5].GetValue(time), curves[6].GetValue(time) };
-            const Float3 scale = { curves[7].GetValue(time), curves[8].GetValue(time),
-                                                  curves[9].GetValue(time) };
+            const Float3 position = {
+                curves[0].GetValue( time ), curves[1].GetValue( time ),
+                curves[2].GetValue( time )
+            };
+            const Vector4 rotation = { {
+                curves[3].GetValue(time), curves[4].GetValue(time),
+                curves[5].GetValue(time), curves[6].GetValue(time)
+            } };
+            const Float3 scale = {
+                curves[7].GetValue( time ), curves[8].GetValue( time ),
+                curves[9].GetValue( time )
+            };
 
             transform->m_position = position;
             transform->m_rotation = rotation;
@@ -874,6 +826,7 @@ public:
                     ifs >> curve.keys[k];
             }
         }
+        CheckTransform(root);
     }
 
     void LoadBinary(const std::string& filename, Transform* root)
@@ -908,6 +861,7 @@ public:
                 fileStream.Read( &curve.keys[0], sizeof( float ) * keyCount );
             }
         }
+        CheckTransform(root);
     }
 
     void SetTransform(const float time)
@@ -919,6 +873,48 @@ public:
     float GetMaxAnimationTime() const
     {
         return maxAnimationTime;
+    }
+
+private:
+    void CheckTransform(Transform* transform)
+    {
+        auto itr =std::find_if(animationList.begin(), animationList.end(),
+            [transform](const Animation& anim)
+            {
+                return anim.transform == transform;
+            });
+        if(itr == animationList.end())
+        {
+            Animation work;
+            work.transform = transform;
+            work.curves[0].keys.push_back(transform->m_position.x);
+            work.curves[0].times.push_back(0);
+            work.curves[1].keys.push_back(transform->m_position.y);
+            work.curves[1].times.push_back(0);
+            work.curves[2].keys.push_back(transform->m_position.z);
+            work.curves[2].times.push_back(0);
+            work.curves[3].keys.push_back(transform->m_rotation.x);
+            work.curves[3].times.push_back(0);
+            work.curves[4].keys.push_back(transform->m_rotation.y);
+            work.curves[4].times.push_back(0);
+            work.curves[5].keys.push_back(transform->m_rotation.z);
+            work.curves[5].times.push_back(0);
+            work.curves[6].keys.push_back(transform->m_rotation.w);
+            work.curves[6].times.push_back(0);
+            work.curves[7].keys.push_back(transform->m_scale.x);
+            work.curves[7].times.push_back(0);
+            work.curves[8].keys.push_back(transform->m_scale.y);
+            work.curves[8].times.push_back(0);
+            work.curves[9].keys.push_back(transform->m_scale.z);
+            work.curves[9].times.push_back(0);
+
+            animationList.push_back(work);
+        }
+
+        for ( auto && child : transform->m_child )
+        {
+            CheckTransform(child);
+        }
     }
 };
 }
