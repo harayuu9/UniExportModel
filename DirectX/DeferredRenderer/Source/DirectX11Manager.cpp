@@ -141,11 +141,12 @@ HRESULT DirectX11Manager::Init(HINSTANCE hInstance, int cCmdShow)
 	D3D_FEATURE_LEVEL featureLevels[] =
 	{
 		D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0,
 	};
 
 	// DirectX11デバイスとスワップチェイン作成
 	hr = D3D11CreateDeviceAndSwapChain(adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL,
-		cdev_flags, featureLevels, 1, D3D11_SDK_VERSION, &sd,
+		cdev_flags, featureLevels, 2, D3D11_SDK_VERSION, &sd,
 		&m_pSwapChain, &m_pDevice, NULL, &m_pImContext);
 	if (FAILED(hr)) {
 		return hr;
