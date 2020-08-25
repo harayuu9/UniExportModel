@@ -175,10 +175,26 @@ namespace Editor
 			}
 		}
 
+		private static bool LoopCheckIsUsed(Transform root, List<string> useTransforms)
+		{
+			// root以下がSkinnedMeshRendererで使用されているかどうか確認
+			if (useTransforms.FindIndex(trans => trans == root.name) != -1) 
+				return true;
+			foreach (Transform child in root)
+			{
+				if (LoopCheckIsUsed(child, useTransforms))
+					return true;
+			}
+			return false;
+		}
+		
 		#region SkinnedMeshAscii
 
-		private void LoopParentChildWriteAscii([NotNull] StreamWriter writer, Transform root)
+		private void LoopParentChildWriteAscii([NotNull] StreamWriter writer, Transform root, List<string> useTransforms)
 		{
+			if (!LoopCheckIsUsed(root, useTransforms))
+				return;
+			
 			writer.WriteLine(root.name);
 			var localPosition = root.localPosition;
 			var localRotation = root.localRotation;
@@ -189,7 +205,7 @@ namespace Editor
 				$"{localScale.x:f8} {localScale.y:f8} {localScale.z:f8}");
 			foreach (Transform child in root)
 			{
-				LoopParentChildWriteAscii(writer, child);
+				LoopParentChildWriteAscii(writer, child, useTransforms);
 			}
 
 			writer.WriteLine("ChildEndTransform");
@@ -197,17 +213,27 @@ namespace Editor
 
 		private void WriteSkinnedMeshAscii([NotNull] StreamWriter writer, GameObject @object, string filePath)
 		{
+			//Meshの情報を保存
+			var smrs = @object.GetComponentsInChildren<SkinnedMeshRenderer>();
+			var mrs  = @object.GetComponentsInChildren<MeshRenderer>();
+
+			var transforms = new List<string>();
+			foreach (var smr in smrs)
+			{
+				if (smr.bones.Any())
+					transforms.AddRange(smr.bones.Select(bone => bone.name));
+				else
+					transforms.Add(smr.transform.name);
+			}
+			transforms.AddRange(mrs.Select(mr => mr.transform.name));
+			transforms = transforms.Distinct().ToList();
+			
 			//階層情報を保存
-			LoopParentChildWriteAscii(writer, @object.transform);
+			LoopParentChildWriteAscii(writer, @object.transform, transforms);
 
 			//保存する頂点データのフォーマットを保存(BitOR
 			var vertexFormat = vertexDataOption.GetFormatFlg();
 			writer.WriteLine((int) vertexFormat);
-
-			//Meshの情報を保存
-			var smrs = @object.GetComponentsInChildren<SkinnedMeshRenderer>();
-			//メッシュレンダラー混在のモデルもあるので
-			var mrs = @object.GetComponentsInChildren<MeshRenderer>();
 
 			writer.WriteLine(smrs.Length + mrs.Length);
 			foreach (var smr in smrs)
@@ -271,9 +297,12 @@ namespace Editor
 		#endregion
 
 		#region SkinnedMeshBinary
-
-		private void LoopParentChildWriteBinary([NotNull] BinaryWriter writer, Transform root)
+		
+		private void LoopParentChildWriteBinary([NotNull] BinaryWriter writer, Transform root, List<string> useTransforms)
 		{
+			if (!LoopCheckIsUsed(root, useTransforms))
+				return;
+			
 			var byteStr = Encoding.ASCII.GetBytes(root.name);
 			writer.Write((short) byteStr.Length);
 			writer.Write(byteStr, 0, byteStr.Length);
@@ -293,7 +322,7 @@ namespace Editor
 
 			foreach (Transform child in root)
 			{
-				LoopParentChildWriteBinary(writer, child);
+				LoopParentChildWriteBinary(writer, child, useTransforms);
 			}
 
 			writer.Write((short) -1);
@@ -301,16 +330,27 @@ namespace Editor
 
 		private void WriteSkinnedMeshBinary([NotNull] BinaryWriter writer, GameObject @object, string filePath)
 		{
+			//Meshの情報を保存
+			var smrs = @object.GetComponentsInChildren<SkinnedMeshRenderer>();
+			var mrs  = @object.GetComponentsInChildren<MeshRenderer>();
+
+			var transforms = new List<string>();
+			foreach (var smr in smrs)
+			{
+				if (smr.bones.Any())
+					transforms.AddRange(smr.bones.Select(bone => bone.name));
+				else
+					transforms.Add(smr.transform.name);
+			}
+			transforms.AddRange(mrs.Select(mr => mr.transform.name));
+			transforms = transforms.Distinct().ToList();
+
 			//階層情報を保存
-			LoopParentChildWriteBinary(writer, @object.transform);
+			LoopParentChildWriteBinary(writer, @object.transform, transforms);
 
 			//保存する頂点データのフォーマットを保存(BitOR 2byte
 			var vertexFormat = vertexDataOption.GetFormatFlg();
 			writer.Write((short) vertexFormat);
-
-			//Meshの情報を保存
-			var smrs = @object.GetComponentsInChildren<SkinnedMeshRenderer>();
-			var mrs = @object.GetComponentsInChildren<MeshRenderer>();
 
 			writer.Write((ushort) (smrs.Length + mrs.Length));
 			foreach (var smr in smrs)
@@ -398,7 +438,7 @@ namespace Editor
 				var skinnedMesh = new SkinnedMesh(mesh);
 				skinnedMesh.OutputBinary(writer, vertexDataOption);
 
-				//SkinnedMeshなのにスキンがついてない謎モデル
+				//SkinnedMeshではない
 				writer.Write((ushort) 1);
 
 				var byteStr = Encoding.ASCII.GetBytes(mr.transform.name);

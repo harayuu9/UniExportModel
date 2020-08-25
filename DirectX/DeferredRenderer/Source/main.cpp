@@ -23,16 +23,16 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	constantBuffer.view = XMMatrixTranspose(XMMatrixLookAtLH(eyePos, targetPos, upVector));
 
 	UnityExportModel model;
-	//model.LoadAscii("Assets/Models/MeshData.txt");
-	model.LoadBinary("Assets/Models/MeshData.bin");
+	//model.LoadAscii("Assets/Models/MeshData.uma");
+	model.LoadBinary("Assets/Models/MeshData.umb");
 
 	UnityExportSkinnedModel skinnedModel;
-	//skinnedModel.LoadAscii("Assets/Models/SkinnedMeshData.txt");
-	skinnedModel.LoadBinary("Assets/Models/SkinnedMeshData.txt.bin");
+	//skinnedModel.LoadAscii("Assets/Models/SkinnedMeshData.usa");
+	skinnedModel.LoadBinary("Assets/Models/SkinnedMeshData.usb");
 
 	uem::SkinnedAnimation animation;
-	//animation.LoadAscii("Assets/Models/JUMP00anim.txt", skinnedModel.uemData.root.get());
-	animation.LoadBinary("Assets/Models/JUMP00anim.bin", skinnedModel.uemData.m_root.get());
+	//animation.LoadAscii("Assets/Models/JUMP00anim.usaa", skinnedModel.uemData.root.get());
+	animation.LoadBinary("Assets/Models/JUMP00anim.usab", skinnedModel.uemData.m_root.get());
 	MSG msg = { 0 };
 	while (true)
 	{

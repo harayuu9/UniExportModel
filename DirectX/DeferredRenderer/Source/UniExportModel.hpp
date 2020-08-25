@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <iostream>
 
 // サンプル用の定義
 #include "SampleDef.h"
@@ -146,7 +147,7 @@ struct Model
     std::vector<Mesh> m_meshes;
     std::vector<Material> m_materials;
 
-    void LoadAscii(std::string filename)
+    void LoadAscii(std::string& filename)
     {
         std::ifstream ifs( filename );
         auto lastSlash = filename.find_last_of( '/' );
@@ -171,6 +172,8 @@ struct Model
         {
             auto errorLog = std::string( typeid( X ).name() ) + " is " + std::to_string( sizeof( X ) ) + "\n " +
                 "The required size is " + std::to_string( totalByte ) + " bytes";
+            std::cout << errorLog;
+            return;
         }
 
         for ( auto i = 0; i < modelCount; i++ )
@@ -253,7 +256,7 @@ struct Model
         }
     }
 
-    void LoadBinary(std::string filename)
+    void LoadBinary(std::string& filename)
     {
         FileStream fileStream( filename.c_str() );
         auto lastSlash = filename.find_last_of( '/' );
@@ -276,6 +279,8 @@ struct Model
         {
             auto errorLog = std::string( typeid( X ).name() ) + " is " + std::to_string( sizeof( X ) ) + "\n " +
                 "The required size is " + std::to_string( totalByte ) + " bytes";
+            std::cout << errorLog;
+            return;
         }
 
         for ( auto i = 0; i < modelCount; i++ )
@@ -496,6 +501,8 @@ public:
         {
             auto errorLog = std::string( typeid( X ).name() ) + " is " + std::to_string( sizeof( X ) ) + "\n " +
                 "The required size is " + std::to_string( totalByte ) + " bytes";
+            std::cout << errorLog;
+            return;
         }
 
         for ( auto i = 0; i < modelCount; i++ )
@@ -633,6 +640,8 @@ public:
         {
             auto errorLog = std::string( typeid( X ).name() ) + " is " + std::to_string( sizeof( X ) ) + "\n " +
                 "The required size is " + std::to_string( totalByte ) + " bytes";
+            std::cout << errorLog;
+            return;
         }
 
         for ( auto i = 0; i < modelCount; i++ )
@@ -663,7 +672,6 @@ public:
 
                 Matrix tmp;
                 fileStream.Read( &tmp, sizeof( float ) * 16 );
-
 
                 auto trans = m_root->Find( name );
                 model.bones.push_back( std::make_pair( Transpose( tmp ), trans ) );
@@ -771,6 +779,8 @@ struct SkinnedAnimation
 
         void SetTransform(const float time)
         {
+            if (!transform)
+                return;
             const Float3 position = {
                 curves[0].GetValue( time ), curves[1].GetValue( time ),
                 curves[2].GetValue( time )
