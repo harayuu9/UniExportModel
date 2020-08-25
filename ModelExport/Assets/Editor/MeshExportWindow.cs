@@ -156,30 +156,51 @@ namespace Editor
             }
         }
 
+        private List<(GameObject,NonSkinnedMesh)> CombineMesh(List<GameObject> gameObjects)
+        {
+            var result = new List<(GameObject, NonSkinnedMesh)>();
+            foreach (var (gameObject, sharedMesh) in gameObjects.Select(go => (go,go.GetComponent<MeshFilter>().sharedMesh)))
+            {
+                var nonSkinnedMesh = new NonSkinnedMesh(sharedMesh, gameObject.transform.localToWorldMatrix);
+                var match = result
+                            .Where(goMesh => goMesh.Item1.GetComponent<MeshRenderer>().sharedMaterial ==
+                                             gameObject.GetComponent<MeshRenderer>().sharedMaterial)
+                            .ToList();
+                if(match.Any())
+                {
+                    match.First().Item2.Combine(nonSkinnedMesh);
+                }
+                else
+                {
+                    result.Add((gameObject,nonSkinnedMesh));
+                }
+            }
+
+            return result;
+        }
+
         private void WriteMeshAscii([NotNull] StreamWriter writer, string filePath)
         {
             //保存する頂点データのフォーマットを保存(BitOR
             var vertexFormat = vertexDataOption.GetFormatFlg();
             writer.WriteLine((int) vertexFormat);
             
-            writer.WriteLine(meshObjectList.Count);
-            foreach (var meshObject in meshObjectList)
+            var gameObjectMeshes = CombineMesh(meshObjectList);
+            writer.Write(gameObjectMeshes.Count);
+            foreach (var gameObjectMesh in gameObjectMeshes)
             {
                 //ProgressView
-                var matchIndex = meshObjectList.FindIndex(o => o == meshObject);
+                var matchIndex = gameObjectMeshes.FindIndex(o => o == gameObjectMesh);
                 progress = (float) matchIndex / meshObjectList.Count;
-                var baseProgressStr = meshObject.name + "...(" + matchIndex + "/" + meshObjectList.Count + ")";
+                var baseProgressStr = gameObjectMesh.Item1.name + "...(" + matchIndex + "/" + meshObjectList.Count + ")";
                 EditorUtility.DisplayProgressBar("Write", progressStr = baseProgressStr, progress);
 
-                var mesh = meshObject.GetComponent<MeshFilter>().sharedMesh;
-
-                var nonSkinnedMesh = new NonSkinnedMesh(mesh,meshObject.transform.localToWorldMatrix);
-                nonSkinnedMesh.OutputAscii(writer, vertexDataOption);
+                gameObjectMesh.Item2.OutputAscii(writer, vertexDataOption);
 
                 writer.WriteLine("");
                 //マテリアルデータを出力
-                meshObject.GetComponent<MeshRenderer>().sharedMaterial
-                    .OutputAscii(writer, materialDataOption, filePath);
+                gameObjectMesh.Item1.GetComponent<MeshRenderer>().sharedMaterial
+                              .OutputAscii(writer, materialDataOption, filePath);
             }
             EditorUtility.ClearProgressBar();
         }
@@ -189,23 +210,22 @@ namespace Editor
             //保存する頂点データのフォーマットを保存(BitOR 2byte
             var vertexFormat = vertexDataOption.GetFormatFlg();
             writer.Write((short) vertexFormat);
+
+            var gameObjectMeshes = CombineMesh(meshObjectList);
             
-            writer.Write((ushort)meshObjectList.Count);
-            foreach (var meshObject in meshObjectList)
+            writer.Write((ushort)gameObjectMeshes.Count);
+            foreach (var gameObjectMesh in gameObjectMeshes)
             {
                 //ProgressView
-                var matchIndex = meshObjectList.FindIndex(o => o == meshObject);
+                var matchIndex = gameObjectMeshes.FindIndex(o => o == gameObjectMesh);
                 progress = (float) matchIndex / meshObjectList.Count;
-                var baseProgressStr = meshObject.name + "...(" + matchIndex + "/" + meshObjectList.Count + ")";
+                var baseProgressStr = gameObjectMesh.Item1.name + "...(" + matchIndex + "/" + meshObjectList.Count + ")";
                 EditorUtility.DisplayProgressBar("Write", progressStr = baseProgressStr, progress);
-
-                var mesh = meshObject.GetComponent<MeshFilter>().sharedMesh;
                 
-                var nonSkinnedMesh = new NonSkinnedMesh(mesh,meshObject.transform.localToWorldMatrix);
-                nonSkinnedMesh.OutputBinary(writer,vertexDataOption);
+                gameObjectMesh.Item2.OutputBinary(writer, vertexDataOption);
 
                 //マテリアルデータを出力
-                meshObject.GetComponent<MeshRenderer>().sharedMaterial.OutputBinary(writer,materialDataOption,filePath);
+                gameObjectMesh.Item1.GetComponent<MeshRenderer>().sharedMaterial.OutputBinary(writer,materialDataOption,filePath);
             }
 
             EditorUtility.ClearProgressBar();

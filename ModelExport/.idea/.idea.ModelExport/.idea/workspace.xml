@@ -3,16 +3,41 @@
   <component name="ChangeListManager">
     <list default="true" id="72e1ccef-c894-4998-ac01-d32d708c822d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/contentModel.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/projectSettingsUpdater.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ModelExport/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/DeskMaterial/pSphere22_pSphere22Mat.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/DeskMaterial/pSphere22_pSphere22Mat.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/DeskMaterial/Table_lambert1_BaseColor.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/DeskMaterial/Table_lambert1_BaseColor.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/DeskMaterial/Table_lambert1_Normal.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/DeskMaterial/Table_lambert1_Normal.png.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Editor/MeshExportWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/MeshExportWindow.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Editor/SkinnedMeshExportWindow.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/SkinnedMeshExportWindow.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Editor/Utility.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Editor/Utility.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/SampleAssets/Table_lambert1_BaseColor_MainTex.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/SampleAssets/Table_lambert1_BaseColor_MainTex.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/SampleAssets/Table_lambert1_Normal_BumpMap.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/SampleAssets/Table_lambert1_Normal_BumpMap.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/SampleAssets/eye_iris_L_00_MainTex.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/SampleAssets/eye_iris_L_00_MainTex.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/SampleAssets/eye_iris_R_00_MainTex.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/SampleAssets/eye_iris_R_00_MainTex.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/SampleAssets/eyeline_00_MainTex.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/SampleAssets/eyeline_00_MainTex.png.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/SampleAssets/face_00_MainTex.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/SampleAssets/face_00_MainTex.png.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Utility.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Tests/UnsafeFileSystem.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Tests/UnsafeFileSystem.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Tests/UnsafeTest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Tests/UnsafeTest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/License/License Logo/LUUL_LOGO_rules02.psd.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/License/License Logo/LUUL_LOGO_rules02.psd.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/DEFAULT_NORMAL.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/DEFAULT_NORMAL.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/ENV2.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/ENV2.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/FO_CLOTH1.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/FO_CLOTH1.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/FO_RIM1.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/FO_RIM1.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/FO_SKIN1.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/FO_SKIN1.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/body_01.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/body_01.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/body_01_NRM.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/body_01_NRM.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/body_01_SPEC.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/body_01_SPEC.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/cheek_00.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/cheek_00.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/eye_iris_L_00.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/eye_iris_L_00.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/eye_iris_R_00.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/eye_iris_R_00.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/eyeline_00.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/eyeline_00.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/face_00.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/face_00.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/guide.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/guide.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/hair_01.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/hair_01.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/hair_01_NRM.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/hair_01_NRM.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/hair_01_SPEC.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/hair_01_SPEC.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/skin_01.tga.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/UnityChan/Models/UnityChanShader/Texture/skin_01.tga.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectVersion.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,25 +48,16 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D195DA47-F292-4AA6-AB1F-FC82F421F850/46/7a013b7e/BinaryReader.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/2A696398-4104-4560-A83F-3FFC542E0762/9e/e31ecc4d/Unsafe.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Tests/Tests.asmdef" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D195DA47-F292-4AA6-AB1F-FC82F421F850/fc/50d83d6e/BinaryWriter.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Editor/ImportProcess.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Editor/Editor.ModelExport.asmdef" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D195DA47-F292-4AA6-AB1F-FC82F421F850/84/e02f4cfe/Single.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Editor/Utility.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Editor/MeshExportWindow.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D195DA47-F292-4AA6-AB1F-FC82F421F850/04/c4d5bbc7/Stream.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Editor/SkinnedMeshExportWindow.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/C254D6BD-DEE2-4EDB-8742-CD1C78B0DB19/25/62f0f7cd/Color.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/59819BE1-42C3-4115-ADE6-88F6962021F1/39/a0669828/TestAttribute.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Editor/UmbImporter.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/C254D6BD-DEE2-4EDB-8742-CD1C78B0DB19/f5/1578f727/Mesh.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/AnimtionBone.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Tests/UnsafeTest.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/D195DA47-F292-4AA6-AB1F-FC82F421F850/4b/1ff3a328/Type.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/ImportProcess.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/SkinnedMeshExportWindow.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Editor/UnsafeFileSystem.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/UmbImporter.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/MeshExportWindow.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/Editor.ModelExport.asmdef" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Tests/Tests.asmdef" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Editor/Utility.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Tests/UnsafeTest.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Tset.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
@@ -60,22 +76,19 @@
         <option value="$PROJECT_DIR$/Assets/Tests/UnsafeTest.cs" />
         <option value="$PROJECT_DIR$/Assets/Editor/UnsafeFileSystem.cs" />
         <option value="$PROJECT_DIR$/Assets/Editor/UmbImporter.cs" />
-        <option value="$PROJECT_DIR$/Assets/Editor/Utility.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/AnimtionBone.cs" />
         <option value="$PROJECT_DIR$/Assets/Scripts/Tset.cs" />
+        <option value="$PROJECT_DIR$/Assets/Editor/Utility.cs" />
         <option value="$PROJECT_DIR$/Assets/Editor/MeshExportWindow.cs" />
       </list>
     </option>
   </component>
   <component name="ProjectId" id="1QiewLS4JOeOmaWqp2Gznj06NB8" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
-    <ConfirmationsSetting value="1" id="Add" />
-  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
     <option name="autoscrollToSource" value="true" />
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
@@ -93,27 +106,22 @@
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
       <option name="pid" />
+      <option name="selectedOptions">
+        <set />
+      </option>
       <method v="2" />
     </configuration>
-    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost" ignored-value-for-modified-check="32200">
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
       <option name="allowRunningInParallel" value="false" />
       <option name="listenPortForConnections" value="false" />
-      <option name="pid" value="32200" />
+      <option name="pid" />
+      <option name="selectedOptions">
+        <set />
+      </option>
       <method v="2" />
     </configuration>
   </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -149,11 +157,13 @@
       <workItem from="1577505874770" duration="674000" />
       <workItem from="1577506890752" duration="14279000" />
       <workItem from="1577594098164" duration="9572000" />
+      <workItem from="1598314350807" duration="1990000" />
+      <workItem from="1598330817851" duration="487000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="EditMode" />
@@ -162,91 +172,21 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="445" height="466" key="DebuggerActiveHint" timestamp="1577600004157">
-      <screen x="0" y="0" width="1920" height="1040" />
+    <state x="2560" y="256" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1598330386023">
+      <screen x="1920" y="0" width="1920" height="1040" />
     </state>
-    <state width="445" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1577600004157" />
-    <state width="1877" height="331" key="GridCell.Tab.0.bottom" timestamp="1577636271252">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271251" />
-    <state width="1877" height="331" key="GridCell.Tab.0.center" timestamp="1577636271251">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271251" />
-    <state width="1877" height="331" key="GridCell.Tab.0.left" timestamp="1577636271250">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271250" />
-    <state width="1877" height="331" key="GridCell.Tab.0.right" timestamp="1577636271251">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271251" />
-    <state width="1877" height="331" key="GridCell.Tab.1.bottom" timestamp="1577636271253">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271253" />
-    <state width="1877" height="331" key="GridCell.Tab.1.center" timestamp="1577636271253">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271253" />
-    <state width="1877" height="331" key="GridCell.Tab.1.left" timestamp="1577636271252">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271252" />
-    <state width="1877" height="331" key="GridCell.Tab.1.right" timestamp="1577636271253">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271253" />
-    <state width="1877" height="331" key="GridCell.Tab.2.bottom" timestamp="1577636271254">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.2.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271254" />
-    <state width="1877" height="331" key="GridCell.Tab.2.center" timestamp="1577636271253">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.2.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271253" />
-    <state width="1877" height="331" key="GridCell.Tab.2.left" timestamp="1577636271253">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.2.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271253" />
-    <state width="1877" height="331" key="GridCell.Tab.2.right" timestamp="1577636271253">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.2.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271253" />
-    <state width="1877" height="331" key="GridCell.Tab.3.bottom" timestamp="1577636271254">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.3.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271254" />
-    <state width="1877" height="331" key="GridCell.Tab.3.center" timestamp="1577636271254">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.3.center/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271254" />
-    <state width="1877" height="331" key="GridCell.Tab.3.left" timestamp="1577636271254">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.3.left/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271254" />
-    <state width="1877" height="331" key="GridCell.Tab.3.right" timestamp="1577636271254">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1877" height="331" key="GridCell.Tab.3.right/0.0.1920.1040@0.0.1920.1040" timestamp="1577636271254" />
-    <state x="832" y="207" key="RiderGenerateDialog" timestamp="1577517436330">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="832" y="207" key="RiderGenerateDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1577517436330" />
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup" timestamp="1577598468751">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="623" y="225" width="672" height="678" key="search.everywhere.popup/0.0.1920.1040@0.0.1920.1040" timestamp="1577598468751" />
+    <state x="2560" y="256" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/1920.0.1920.1040/0.0.1920.1040@1920.0.1920.1040" timestamp="1598330386023" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
